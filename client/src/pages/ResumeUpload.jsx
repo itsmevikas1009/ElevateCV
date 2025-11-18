@@ -5,8 +5,6 @@ export default function ResumeUpload() {
   const [jobTitle, setJobTitle] = useState("Frontend Developer");
   const [description, setDescription] = useState("");
   const [file, setFile] = useState(null);
-  const [result, setResult] = useState(null);
-  const [loading, setLoading] = useState(false);
   const fileInputRef = useRef(null);
 
   const handleFileSelect = (e) => {
@@ -14,32 +12,9 @@ export default function ResumeUpload() {
     if (f) setFile(f);
   };
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = (e) => {
     e.preventDefault();
-    if (!file) return alert("Select a file first");
-
-    setLoading(true);
-    setResult(null);
-
-    try {
-      const fd = new FormData();
-      fd.append("resume", file);
-      fd.append("company", company);
-      fd.append("jobTitle", jobTitle);
-      fd.append("description", description);
-
-      const res = await fetch("/api/resume/upload", {
-        method: "POST",
-        body: fd,
-      });
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.message || "Upload failed");
-      setResult(data);
-    } catch (err) {
-      alert("Upload/analysis failed: " + err.message);
-    } finally {
-      setLoading(false);
-    }
+    console.log({ company, jobTitle, description, file });
   };
 
   return (
@@ -149,7 +124,7 @@ export default function ResumeUpload() {
                 className="hidden"
               />
 
-              {/* Floating "You" bubble */}
+              {/* Floating “You” bubble */}
               <div className="absolute right-3 bottom-3 bg-white rounded-full shadow-md px-2.5 py-0.5 flex items-center gap-1">
                 <div className="w-2 h-2 rounded-full bg-[#7A7CFF]" />
                 <span className="text-xs text-[#27425E] font-medium">You</span>
@@ -160,22 +135,11 @@ export default function ResumeUpload() {
           {/* Save Button */}
           <button
             type="submit"
-            disabled={!file || loading}
-            className={`w-full py-3 mt-2 rounded-full text-white font-medium bg-gradient-to-r from-[#6B63FF] to-[#7A7CFF] shadow-[0_8px_20px_rgba(123,123,255,0.25)] hover:shadow-[0_10px_24px_rgba(123,123,255,0.35)] transition-all duration-200 ${
-              (!file || loading) && "opacity-50 cursor-not-allowed"
-            }`}
+            className="w-full py-3 mt-2 rounded-full text-white font-medium bg-gradient-to-r from-[#6B63FF] to-[#7A7CFF] shadow-[0_8px_20px_rgba(123,123,255,0.25)] hover:shadow-[0_10px_24px_rgba(123,123,255,0.35)] transition-all duration-200"
           >
-            {loading ? "Analyzing..." : "Save & Analyze Resume"}
+            Save & Analyze Resume
           </button>
         </form>
-
-        {/* AI Feedback Result */}
-        {result && (
-          <section className="mt-8 p-6 bg-gray-100 rounded-lg whitespace-pre-wrap text-gray-800 font-mono text-sm">
-            <h3 className="font-semibold mb-3">AI Feedback (summary):</h3>
-            <pre>{JSON.stringify(result.feedback || result, null, 2)}</pre>
-          </section>
-        )}
       </div>
     </div>
   );
