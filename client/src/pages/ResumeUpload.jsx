@@ -1,0 +1,182 @@
+import React, { useState, useRef } from "react";
+
+export default function ResumeUpload() {
+  const [company, setCompany] = useState("JavaScript Mastery");
+  const [jobTitle, setJobTitle] = useState("Frontend Developer");
+  const [description, setDescription] = useState("");
+  const [file, setFile] = useState(null);
+  const [result, setResult] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const fileInputRef = useRef(null);
+
+  const handleFileSelect = (e) => {
+    const f = e.target.files?.[0];
+    if (f) setFile(f);
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    if (!file) return alert("Select a file first");
+
+    setLoading(true);
+    setResult(null);
+
+    try {
+      const fd = new FormData();
+      fd.append("resume", file);
+      fd.append("company", company);
+      fd.append("jobTitle", jobTitle);
+      fd.append("description", description);
+
+      const res = await fetch("/api/resume/upload", {
+        method: "POST",
+        body: fd,
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.message || "Upload failed");
+      setResult(data);
+    } catch (err) {
+      alert("Upload/analysis failed: " + err.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <div className="min-h-screen flex items-center justify-center pt-24 pb-6 px-6">
+      <div className="w-full max-w-2xl bg-white/60 backdrop-blur-md rounded-[34px] shadow-[0_12px_50px_rgba(134,118,255,0.15)] ring-1 ring-white/40 p-10">
+        {/* Header */}
+        <header className="text-center mb-10">
+          <h1 className="text-[48px] md:text-5xl font-extrabold leading-tight tracking-tight">
+            <span className="bg-gradient-to-r from-[#7a5cff] via-[#8b84ff] to-[#d88aa6] bg-clip-text text-transparent">
+              Smart feedback
+            </span>
+            <br />
+            <span className="text-gray-800">for your dream job</span>
+          </h1>
+          <p className="text-gray-600 mt-3 text-base">
+            Drop your resume for an ATS score and improvement tips.
+          </p>
+        </header>
+
+        {/* Form */}
+        <form onSubmit={handleSubmit} className="space-y-7">
+          {/* Company Name */}
+          <div>
+            <label className="block text-sm text-gray-600 mb-2">
+              Company Name
+            </label>
+            <input
+              type="text"
+              value={company}
+              onChange={(e) => setCompany(e.target.value)}
+              className="w-full rounded-xl px-4 py-3 text-gray-800 placeholder-gray-400 bg-white border border-transparent shadow-[inset_0_2px_6px_rgba(0,0,0,0.05)] focus:outline-none focus:ring-0 focus:shadow-[inset_0_0_0_3px_rgba(123,123,255,0.2)] transition"
+            />
+          </div>
+
+          {/* Job Title */}
+          <div>
+            <label className="block text-sm text-gray-600 mb-2">
+              Job Title
+            </label>
+            <input
+              type="text"
+              value={jobTitle}
+              onChange={(e) => setJobTitle(e.target.value)}
+              className="w-full rounded-xl px-4 py-3 text-gray-800 placeholder-gray-400 bg-white border border-transparent shadow-[inset_0_2px_6px_rgba(0,0,0,0.05)] focus:outline-none focus:ring-0 focus:shadow-[inset_0_0_0_3px_rgba(123,123,255,0.2)] transition"
+            />
+          </div>
+
+          {/* Job Description */}
+          <div>
+            <label className="block text-sm text-gray-600 mb-2">
+              Job Description
+            </label>
+            <textarea
+              value={description}
+              onChange={(e) => setDescription(e.target.value)}
+              placeholder="Write a clear & concise job description with responsibilities & expectations..."
+              className="w-full rounded-xl px-4 py-3 text-gray-800 placeholder-gray-400 bg-white border border-transparent shadow-[inset_0_2px_6px_rgba(0,0,0,0.05)] focus:outline-none focus:ring-0 focus:shadow-[inset_0_0_0_3px_rgba(123,123,255,0.2)] resize-none h-28 transition"
+            />
+          </div>
+
+          {/* Upload Resume */}
+          <div>
+            <label className="block text-sm text-gray-600 mb-3">
+              Upload Resume
+            </label>
+            <div
+              onClick={() => fileInputRef.current.click()}
+              className="cursor-pointer flex flex-col items-center justify-center rounded-2xl border-2 border-dashed border-[#E0E3FF] bg-white/80 py-10 hover:border-[#b8b3ff] transition relative"
+            >
+              <div className="w-12 h-12 rounded-full bg-[#f1efff] flex items-center justify-center mb-3">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  strokeWidth={1.6}
+                  stroke="#6B63FF"
+                  className="w-6 h-6"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    d="M12 4v16m8-8H4"
+                  />
+                </svg>
+              </div>
+              <p className="text-gray-800 font-medium">
+                Click to upload{" "}
+                <span className="text-gray-500 font-normal">
+                  or drag and drop
+                </span>
+              </p>
+              <p className="text-sm text-gray-400 mt-1">
+                PDF, PNG or JPG (max. 10MB)
+              </p>
+
+              {file && (
+                <p className="mt-4 text-sm text-gray-700">
+                  Uploaded: <span className="font-medium">{file.name}</span>
+                </p>
+              )}
+
+              <input
+                ref={fileInputRef}
+                type="file"
+                accept=".pdf,.png,.jpg,.jpeg"
+                onChange={handleFileSelect}
+                className="hidden"
+              />
+
+              {/* Floating "You" bubble */}
+              <div className="absolute right-3 bottom-3 bg-white rounded-full shadow-md px-2.5 py-0.5 flex items-center gap-1">
+                <div className="w-2 h-2 rounded-full bg-[#7A7CFF]" />
+                <span className="text-xs text-[#27425E] font-medium">You</span>
+              </div>
+            </div>
+          </div>
+
+          {/* Save Button */}
+          <button
+            type="submit"
+            disabled={!file || loading}
+            className={`w-full py-3 mt-2 rounded-full text-white font-medium bg-gradient-to-r from-[#6B63FF] to-[#7A7CFF] shadow-[0_8px_20px_rgba(123,123,255,0.25)] hover:shadow-[0_10px_24px_rgba(123,123,255,0.35)] transition-all duration-200 ${
+              (!file || loading) && "opacity-50 cursor-not-allowed"
+            }`}
+          >
+            {loading ? "Analyzing..." : "Save & Analyze Resume"}
+          </button>
+        </form>
+
+        {/* AI Feedback Result */}
+        {result && (
+          <section className="mt-8 p-6 bg-gray-100 rounded-lg whitespace-pre-wrap text-gray-800 font-mono text-sm">
+            <h3 className="font-semibold mb-3">AI Feedback (summary):</h3>
+            <pre>{JSON.stringify(result.feedback || result, null, 2)}</pre>
+          </section>
+        )}
+      </div>
+    </div>
+  );
+}

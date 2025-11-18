@@ -1,16 +1,16 @@
 import React from "react";
 import { Link } from "react-router-dom";
 
-const Login = () => {
+const SignUp = () => {
   return (
-    <div className="min-h-screen flex items-center justify-center pt-16 pb-6 px-6">
+    <div className="min-h-screen flex items-center justify-center pt-20 pb-6 px-6">
       <div className="w-full max-w-3xl flex flex-col items-center">
         <header className="text-center mb-8">
-          <h1 className="text-5xl font-bold mb-2 leading-tight tracking-tight bg-gradient-to-r from-[#7a5cff] via-[#8b84ff] to-[#d88aa6] bg-clip-text text-transparent">
-            Welcome Back
+          <h1 className="md:text-5xl text-4xl font-bold mb-2 leading-tight tracking-tight bg-gradient-to-r from-[#7a5cff] via-[#8b84ff] to-[#d88aa6] bg-clip-text text-transparent">
+            Create your Account
           </h1>
           <p className="text-gray-600 text-lg">
-            Log In to Continue Your Job Journey
+            It’s totally free and super easy
           </p>
         </header>
 
@@ -22,7 +22,17 @@ const Login = () => {
               <form className="space-y-6">
                 <div>
                   <label className="block text-sm text-gray-600 mb-2">
-                    Email Address
+                    Name *
+                  </label>
+                  <input
+                    type="text"
+                    placeholder="Enter your name"
+                    className="w-full rounded-xl px-4 py-3 text-gray-800 placeholder-gray-400 border border-transparent focus:outline-none focus:ring-0 focus:shadow-focus-inset"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm text-gray-600 mb-2">
+                    Email Address *
                   </label>
                   <input
                     type="email"
@@ -33,7 +43,7 @@ const Login = () => {
 
                 <div>
                   <label className="block text-sm text-gray-600 mb-2">
-                    Password
+                    Password *
                   </label>
                   <input
                     type="password"
@@ -46,7 +56,7 @@ const Login = () => {
                   type="submit"
                   className="w-full py-3 mt-2 rounded-full text-white font-medium bg-gradient-to-r from-[#6B63FF] to-[#7A7CFF] shadow-[0_8px_20px_rgba(123,123,255,0.25)] hover:shadow-[0_10px_24px_rgba(123,123,255,0.35)] transition-all duration-200"
                 >
-                  Log In
+                  Register
                 </button>
               </form>
             </div>
@@ -55,12 +65,12 @@ const Login = () => {
           {/* subtle glow / bottom shadow */}
           <div className="mt-6 text-center">
             <p className="text-gray-600">
-              Don’t have an account?{" "}
+              Already have an account?{" "}
               <Link
-                to="/signup"
+                to="/signin"
                 className="text-[#6f66ff] font-medium hover:underline"
               >
-                Sign up
+                Sign in
               </Link>
             </p>
           </div>
@@ -70,4 +80,4 @@ const Login = () => {
   );
 };
 
-export default Login;
+export default SignUp;
