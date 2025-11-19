@@ -5,6 +5,36 @@ import User from "../models/User.js";
 const JWT_SECRET = process.env.JWT_SECRET || "your_secret_key";
 
 // 🟢 Register new user
+// export const registerUser = async (req, res) => {
+//   try {
+//     const { name, email, password, company, role } = req.body;
+
+//     if (!name || !email || !password)
+//       return res.status(400).json({ message: "All required fields missing." });
+
+//     const existingUser = await User.findOne({ email });
+//     if (existingUser)
+//       return res.status(400).json({ message: "Email already registered." });
+
+//     const hashedPassword = await bcrypt.hash(password, 10);
+//     const user = await User.create({
+//       name,
+//       email,
+//       password: hashedPassword,
+//       company,
+//       role,
+//     });
+
+//     res.status(201).json({
+//       success: true,
+//       message: "User registered successfully.",
+//       user: { id: user._id, name: user.name, email: user.email, role: user.role },
+//     });
+//   } catch (err) {
+//     res.status(500).json({ message: err.message });
+//   }
+// };
+
 export const registerUser = async (req, res) => {
   try {
     const { name, email, password, company, role } = req.body;
@@ -25,13 +55,22 @@ export const registerUser = async (req, res) => {
       role,
     });
 
+    // Create JWT token
+    const token = jwt.sign(
+      { id: user._id, email: user.email, role: user.role },
+      JWT_SECRET,
+      { expiresIn: "7d" }
+    );
+
     res.status(201).json({
       success: true,
       message: "User registered successfully.",
+      token,
       user: { id: user._id, name: user.name, email: user.email, role: user.role },
     });
   } catch (err) {
-    res.status(500).json({ message: err.message });
+    console.error("Register error:", err);
+    res.status(500).json({ message: err.message || "Server error." });
   }
 };
 

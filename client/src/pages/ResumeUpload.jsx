@@ -1,10 +1,18 @@
+// src/pages/ResumeUpload.jsx
 import React, { useState, useRef } from "react";
+import { useNavigate } from "react-router-dom";
 
 export default function ResumeUpload() {
+  const navigate = useNavigate();
   const [company, setCompany] = useState("JavaScript Mastery");
   const [jobTitle, setJobTitle] = useState("Frontend Developer");
   const [description, setDescription] = useState("");
   const [file, setFile] = useState(null);
+
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
+  const [feedback, setFeedback] = useState(null);
+
   const fileInputRef = useRef(null);
 
   const handleFileSelect = (e) => {
@@ -12,9 +20,62 @@ export default function ResumeUpload() {
     if (f) setFile(f);
   };
 
-  const handleSubmit = (e) => {
+  const resetForm = () => {
+    setCompany("JavaScript Mastery");
+    setJobTitle("Frontend Developer");
+    setDescription("");
+    setFile(null);
+    setFeedback(null);
+    setError("");
+  };
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log({ company, jobTitle, description, file });
+    setError("");
+    setFeedback(null);
+
+    if (!file) {
+      setError("Please upload a resume file (PDF, PNG, JPG).");
+      return;
+    }
+
+    setLoading(true);
+
+    try {
+      const token = localStorage.getItem("token") || "";
+
+      const formData = new FormData();
+      // IMPORTANT: send the file under the "resume" key to match your Multer config
+      formData.append("resume", file);
+      formData.append("companyName", company);
+      formData.append("jobTitle", jobTitle);
+      formData.append("jobDescription", description);
+
+      const res = await fetch("http://localhost:5000/api/resume/upload", {
+        method: "POST",
+        headers: {
+          // DO NOT set Content-Type for multipart/form-data; the browser sets it automatically
+          Authorization: token ? `Bearer ${token}` : "",
+        },
+        body: formData,
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        throw new Error(data?.message || "Upload failed");
+      }
+
+      // On success show AI feedback or navigate to a result page
+      setFeedback(data?.feedback || data);
+      // Optionally redirect to a resume details page:
+      // navigate(`/resume/${data.resumeId}`);
+    } catch (err) {
+      console.error("Upload error:", err);
+      setError(err.message || "An error occurred while uploading.");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -58,7 +119,7 @@ export default function ResumeUpload() {
               type="text"
               value={jobTitle}
               onChange={(e) => setJobTitle(e.target.value)}
-              className="w-full rounded-xl px-4 py-3 text-gray-800 placeholder-gray-400 bg-white border border-transparent shadow-[inset_0_2px_6px_rgba(0,0,0,0.05)] focus:outline-none focus:ring-0 focus:shadow-[inset_0_0_0_3px_rgba(123,123,255,0.2)] transition"
+              className="w-full rounded-xl px-4 py-3 text-gray-800 placeholder-gray-400 bg-white border border-transparent shadow-[inset_0_2px_6px_rgba(0,0,0,0.05)] focus:outline-none focus:ring-0 focus:focus:shadow-[inset_0_0_0_3px_rgba(123,123,255,0.2)] transition"
             />
           </div>
 
@@ -102,13 +163,9 @@ export default function ResumeUpload() {
               </div>
               <p className="text-gray-800 font-medium">
                 Click to upload{" "}
-                <span className="text-gray-500 font-normal">
-                  or drag and drop
-                </span>
+                <span className="text-gray-500 font-normal">or drag and drop</span>
               </p>
-              <p className="text-sm text-gray-400 mt-1">
-                PDF, PNG or JPG (max. 10MB)
-              </p>
+              <p className="text-sm text-gray-400 mt-1">PDF, PNG or JPG (max. 10MB)</p>
 
               {file && (
                 <p className="mt-4 text-sm text-gray-700">
@@ -132,13 +189,34 @@ export default function ResumeUpload() {
             </div>
           </div>
 
+          {/* Feedback / Error */}
+          {error && <div className="text-sm text-red-600 bg-red-50 p-3 rounded">{error}</div>}
+
+          {feedback && (
+            <div className="bg-white rounded-xl p-4 border border-gray-100 shadow-sm">
+              <h3 className="font-semibold mb-2">AI Feedback</h3>
+              <pre className="text-sm whitespace-pre-wrap">{JSON.stringify(feedback, null, 2)}</pre>
+            </div>
+          )}
+
           {/* Save Button */}
-          <button
-            type="submit"
-            className="w-full py-3 mt-2 rounded-full text-white font-medium bg-gradient-to-r from-[#6B63FF] to-[#7A7CFF] shadow-[0_8px_20px_rgba(123,123,255,0.25)] hover:shadow-[0_10px_24px_rgba(123,123,255,0.35)] transition-all duration-200"
-          >
-            Save & Analyze Resume
-          </button>
+          <div className="flex gap-3">
+            <button
+              type="submit"
+              disabled={loading}
+              className="flex-1 py-3 mt-2 rounded-full text-white font-medium bg-gradient-to-r from-[#6B63FF] to-[#7A7CFF] shadow-[0_8px_20px_rgba(123,123,255,0.25)] hover:shadow-[0_10px_24px_rgba(123,123,255,0.35)] transition-all duration-200 disabled:opacity-60"
+            >
+              {loading ? "Analyzing..." : "Save & Analyze Resume"}
+            </button>
+
+            <button
+              type="button"
+              onClick={resetForm}
+              className="py-3 mt-2 rounded-full text-sm px-4 bg-white border border-gray-200"
+            >
+              Reset
+            </button>
+          </div>
         </form>
       </div>
     </div>
