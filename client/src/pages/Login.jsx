@@ -1,4 +1,3 @@
-// src/pages/Login.jsx
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { login } from "../lib/auth";
@@ -9,7 +8,8 @@ const Login = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
-  const handleChange = (e) => setForm((f) => ({ ...f, [e.target.name]: e.target.value }));
+  const handleChange = (e) =>
+    setForm((f) => ({ ...f, [e.target.name]: e.target.value }));
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -22,7 +22,10 @@ const Login = () => {
 
     setLoading(true);
     try {
-      const result = await login({ email: form.email, password: form.password });
+      const result = await login({
+        email: form.email,
+        password: form.password,
+      });
 
       if (result?.token) {
         localStorage.setItem("token", result.token);
@@ -45,17 +48,25 @@ const Login = () => {
           <h1 className="text-5xl font-bold mb-2 leading-tight tracking-tight bg-gradient-to-r from-[#7a5cff] via-[#8b84ff] to-[#d88aa6] bg-clip-text text-transparent">
             Welcome Back
           </h1>
-          <p className="text-gray-600 text-lg">Log In to Continue Your Job Journey</p>
+          <p className="text-gray-600 text-lg">
+            Log In to Continue Your Job Journey
+          </p>
         </header>
 
         <div className="relative w-full max-w-lg">
           <div className="rounded-[34px] p-5 bg-white/60 backdrop-blur-sm shadow-outer ring ring-white/40">
             <div className="bg-white rounded-2xl p-6 shadow-inner-card">
               <form className="space-y-6" onSubmit={handleSubmit}>
-                {error && <div className="text-sm text-red-600 bg-red-50 p-2 rounded">{error}</div>}
+                {error && (
+                  <div className="text-sm text-red-600 bg-red-50 p-2 rounded">
+                    {error}
+                  </div>
+                )}
 
                 <div>
-                  <label className="block text-sm text-gray-600 mb-2">Email Address</label>
+                  <label className="block text-sm text-gray-600 mb-2">
+                    Email Address *
+                  </label>
                   <input
                     name="email"
                     value={form.email}
@@ -67,7 +78,9 @@ const Login = () => {
                 </div>
 
                 <div>
-                  <label className="block text-sm text-gray-600 mb-2">Password</label>
+                  <label className="block text-sm text-gray-600 mb-2">
+                    Password *
+                  </label>
                   <input
                     name="password"
                     value={form.password}
@@ -92,7 +105,10 @@ const Login = () => {
           <div className="mt-6 text-center">
             <p className="text-gray-600">
               Don’t have an account?{" "}
-              <Link to="/signup" className="text-[#6f66ff] font-medium hover:underline">
+              <Link
+                to="/signup"
+                className="text-[#6f66ff] font-medium hover:underline"
+              >
                 Sign up
               </Link>
             </p>

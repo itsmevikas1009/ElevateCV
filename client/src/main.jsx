@@ -56,10 +56,19 @@ import SignUp from "./pages/SignUp.jsx";
 import Dashboard from "./pages/Dashboard.jsx";
 import EditProfile from "./pages/EditProfile.jsx";
 
-// Protect route wrapper
+// Public route wrapper
+const PublicRoute = ({ children }) => {
+  const isLoggedIn = Boolean(localStorage.getItem("token"));
+
+  if (isLoggedIn) return <Navigate to="/dashboard" replace />;
+  return children;
+};
+
+// Protected route wrapper
 const ProtectedRoute = ({ children }) => {
-  const token = localStorage.getItem("token");
-  if (!token) return <Navigate to="/signin" replace />;
+  const isLoggedIn = Boolean(localStorage.getItem("token"));
+
+  if (!isLoggedIn) return <Navigate to="/signin" replace />;
   return children;
 };
 
@@ -87,15 +96,27 @@ const appRouter = createBrowserRouter([
       // Public routes
       {
         path: "/signin",
-        element: <Login />,
+        element: (
+          <PublicRoute>
+            <Login />
+          </PublicRoute>
+        ),
       },
       {
         path: "/signup",
-        element: <SignUp />,
+        element: (
+          <PublicRoute>
+            <SignUp />
+          </PublicRoute>
+        ),
       },
       {
         path: "/resume-upload",
-        element: <ResumeUpload />,
+        element: (
+          <ProtectedRoute>
+            <ResumeUpload />
+          </ProtectedRoute>
+        ),
       },
 
       // 🔐 Protected routes

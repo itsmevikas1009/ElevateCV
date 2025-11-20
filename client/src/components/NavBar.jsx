@@ -35,15 +35,24 @@ const NavBar = () => {
   // Toggle submenu
   const [openIndex, setOpenIndex] = useState(-1);
 
+  // Detect login status by checking token in localStorage
+  const isLoggedIn = Boolean(localStorage.getItem("token"));
+
   const location = useLocation();
   const currentPath = location.pathname || "/";
 
-  // Toggle navbar visibility
+  // Toggle navbar visibility handler
   const navbarToggleHandler = () => setNavbarOpen((prev) => !prev);
 
-  // Toggle submenu
+  // Toggle submenu handler
   const handleSubmenu = (index) =>
     setOpenIndex((prev) => (prev === index ? -1 : index));
+
+  // Logout handler clears the token and redirects to signin
+  const handleLogout = () => {
+    localStorage.removeItem("token");
+    window.location.href = "/signin";
+  };
 
   return (
     <header className="z-40 flex w-full items-center fixed bg-white bg-opacity-60 shadow-md backdrop-blur-sm transition">
@@ -85,12 +94,12 @@ const NavBar = () => {
               {/* Menu */}
               <nav
                 className={`absolute right-0 z-30 w-[250px] rounded border border-gray-200 bg-white px-6 py-4 duration-300
-                  lg:visible lg:static lg:w-auto lg:border-none lg:bg-transparent lg:p-0 lg:opacity-100
-                  ${
-                    navbarOpen
-                      ? "visible top-full opacity-100"
-                      : "invisible top-[120%] opacity-0"
-                  }`}
+                 lg:visible lg:static lg:w-auto lg:border-none lg:bg-transparent lg:p-0 lg:opacity-100
+                 ${
+                   navbarOpen
+                     ? "visible top-full opacity-100"
+                     : "invisible top-[120%] opacity-0"
+                 }`}
               >
                 <ul className="block lg:flex lg:space-x-12">
                   {menuData.map((menuItem, index) => (
@@ -157,18 +166,37 @@ const NavBar = () => {
 
             {/* Right side buttons */}
             <div className="flex items-center justify-end pr-16 lg:pr-0 space-x-4">
-              <Link
-                to="/signin"
-                className="text-blue-600 font-medium text-base hover:opacity-80 transition"
-              >
-                Sign In
-              </Link>
-              <Link
-                to="/signup"
-                className="text-blue-600 font-medium text-base bg-blue-200 md:px-8 px-4 md:py-3 py-2 rounded-r-full rounded-b-full hover:bg-blue-600 hover:text-white transition"
-              >
-                Sign Up
-              </Link>
+              {!isLoggedIn ? (
+                <>
+                  <Link
+                    to="/signin"
+                    className="text-blue-600 font-medium text-base hover:opacity-80 transition"
+                  >
+                    Sign In
+                  </Link>
+                  <Link
+                    to="/signup"
+                    className="text-blue-600 font-medium text-base bg-blue-200 md:px-8 px-4 md:py-3 py-2 rounded-r-full rounded-b-full hover:bg-blue-600 hover:text-white transition"
+                  >
+                    Sign Up
+                  </Link>
+                </>
+              ) : (
+                <>
+                  <Link
+                    to="/dashboard"
+                    className="text-blue-600 font-medium text-base hover:opacity-80 transition"
+                  >
+                    Dashboard
+                  </Link>
+                  <button
+                    onClick={handleLogout}
+                    className="text-red-600 font-medium text-base hover:opacity-80 transition"
+                  >
+                    Log Out
+                  </button>
+                </>
+              )}
             </div>
           </div>
         </div>

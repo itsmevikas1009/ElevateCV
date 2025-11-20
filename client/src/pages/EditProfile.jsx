@@ -1,4 +1,3 @@
-// src/pages/EditProfile.jsx
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { getProfile, updateProfile } from "../lib/auth";
@@ -114,7 +113,9 @@ const EditProfile = () => {
         <form className="space-y-6" onSubmit={handleSubmit}>
           {/* Name */}
           <div>
-            <label className="block text-sm text-gray-600 mb-1">Full Name</label>
+            <label className="block text-sm text-gray-600 mb-1">
+              Full Name
+            </label>
             <input
               name="name"
               value={form.name}
@@ -138,7 +139,8 @@ const EditProfile = () => {
               readOnly
             />
             <p className="text-xs text-gray-400 mt-1">
-              To change email, please contact support or update it from account settings.
+              To change email, please contact support or update it from account
+              settings.
             </p>
           </div>
 
@@ -170,7 +172,9 @@ const EditProfile = () => {
 
           {/* Contact Number */}
           <div>
-            <label className="block text-sm text-gray-600 mb-1">Contact Number</label>
+            <label className="block text-sm text-gray-600 mb-1">
+              Contact Number
+            </label>
             <input
               name="contactNumber"
               value={form.contactNumber}
@@ -183,7 +187,9 @@ const EditProfile = () => {
 
           {/* Profile Image URL (optional) */}
           <div>
-            <label className="block text-sm text-gray-600 mb-1">Profile Image URL</label>
+            <label className="block text-sm text-gray-600 mb-1">
+              Profile Image URL
+            </label>
             <input
               name="profileImage"
               value={form.profileImage}
@@ -192,7 +198,9 @@ const EditProfile = () => {
               className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-indigo-300 outline-none"
               placeholder="https://example.com/avatar.jpg"
             />
-            <p className="text-xs text-gray-400 mt-1">Or leave blank to keep current avatar.</p>
+            <p className="text-xs text-gray-400 mt-1">
+              Or leave blank to keep current avatar.
+            </p>
           </div>
 
           {/* Save Button */}
