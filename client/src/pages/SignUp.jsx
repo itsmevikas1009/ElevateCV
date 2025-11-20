@@ -48,7 +48,7 @@ const SignUp = () => {
     <div className="min-h-screen flex items-center justify-center pt-20 pb-6 px-6">
       <div className="w-full max-w-3xl flex flex-col items-center">
         <header className="text-center mb-8">
-          <h1 className="md:text-5xl text-4xl font-bold mb-2 leading-tight tracking-tight bg-gradient-to-r from-[#7a5cff] via-[#8b84ff] to-[#d88aa6] bg-clip-text text-transparent">
+          <h1 className="md:text-5xl text-4xl font-bold mb-2 leading-tight tracking-tight bg-linear-to-r from-[#7a5cff] via-[#8b84ff] to-[#d88aa6] bg-clip-text text-transparent">
             Create your Account
           </h1>
           <p className="text-gray-600 text-lg">
@@ -121,7 +121,7 @@ const SignUp = () => {
                 <button
                   type="submit"
                   disabled={loading}
-                  className="w-full py-3 mt-2 rounded-full text-white font-medium bg-gradient-to-r from-[#6B63FF] to-[#7A7CFF] shadow-[0_8px_20px_rgba(123,123,255,0.25)] hover:shadow-[0_10px_24px_rgba(123,123,255,0.35)] transition-all duration-200 disabled:opacity-60"
+                  className="w-full py-3 mt-2 rounded-full text-white font-medium bg-linear-to-r from-[#6B63FF] to-[#7A7CFF] shadow-[0_8px_20px_rgba(123,123,255,0.25)] hover:shadow-[0_10px_24px_rgba(123,123,255,0.35)] transition-all duration-200 disabled:opacity-60"
                 >
                   {loading ? "Registering..." : "Register"}
                 </button>

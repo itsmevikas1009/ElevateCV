@@ -22,6 +22,7 @@ import { protect } from "../middleware/authMiddleware.js";
 import {
   uploadResume,
   getResumeById,
+  deleteResumeById,
 } from "../controllers/resumeController.js";
 
 const router = express.Router();
@@ -50,5 +51,8 @@ router.post("/upload", protect, upload.single("resume"), uploadResume);
 
 // 🟢 Get Resume by ID
 router.get("/:id", protect, getResumeById);
+
+// 🟢 Delete Resume by ID
+router.delete("/:id", protect, deleteResumeById);
 
 export default router;

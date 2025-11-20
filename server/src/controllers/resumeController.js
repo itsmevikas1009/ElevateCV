@@ -131,3 +131,43 @@ export const getResumeById = async (req, res) => {
     res.status(500).json({ message: err.message });
   }
 };
+
+// 🟢 Delete Resume by ID
+export const deleteResumeById = async (req, res) => {
+  try {
+    const resumeDoc = await Resume.findById(req.params.id);
+    if (!resumeDoc) {
+      return res.status(404).json({ message: "Resume not found" });
+    }
+
+    // Ownership check
+    if (!resumeDoc.user.equals(req.user._id)) {
+      return res.status(403).json({ message: "You do not have permission to delete this resume." });
+    }
+
+    // Delete resume file from disk if it exists
+    if (resumeDoc.resumePath) {
+      try {
+        // Assumes resumePath is like "/uploads/filename.ext"
+        const uploadPath = path.join(process.cwd(), resumeDoc.resumePath);
+        await fs.unlink(uploadPath);
+      } catch (fileErr) {
+        // Optionally log, but don't block deletion if file is already gone
+        console.warn("Resume file deletion warning:", fileErr.message);
+      }
+    }
+
+    // Remove from database
+    await resumeDoc.deleteOne();
+
+    // Remove reference from user's resumes array
+    const User = (await import("../models/User.js")).default;
+    await User.findByIdAndUpdate(req.user._id, {
+      $pull: { resumes: resumeDoc._id },
+    });
+
+    res.status(200).json({ success: true, message: "Resume deleted successfully" });
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+};

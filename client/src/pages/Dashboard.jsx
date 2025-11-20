@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { getProfile, logout } from "../lib/api"; // Use api.js, not auth.js
+import { getProfile, logout, deleteResumeById } from "../lib/api";
+import toast from "react-hot-toast";
 import Loader from "../components/Loader.jsx";
 
 const StatCard = ({ title, value, subtitle }) => (
@@ -16,6 +17,24 @@ const Dashboard = () => {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+
+  const handleDeleteResume = async (resumeId) => {
+    if (
+      !window.confirm(
+        "Are you sure you want to delete this resume? This action cannot be undone."
+      )
+    )
+      return;
+    try {
+      await deleteResumeById(resumeId);
+      toast.success("Resume deleted!");
+      // Re-fetch profile to update UI
+      const res = await getProfile();
+      setUser(res.user || null); // Refresh user and resumes list
+    } catch (err) {
+      toast.error(err.message || "Failed to delete resume.");
+    }
+  };
 
   // fetch profile on mount
   useEffect(() => {
@@ -85,7 +104,7 @@ const Dashboard = () => {
             </button>
             <button
               onClick={handleLogout}
-              className="px-4 py-2 rounded-full bg-gradient-to-r from-[#ff6b6b] to-[#ff8a8a] text-white text-sm font-medium shadow-md hover:opacity-95 transition"
+              className="px-4 py-2 rounded-full bg-linear-to-r from-[#ff6b6b] to-[#ff8a8a] text-white text-sm font-medium shadow-md hover:opacity-95 transition"
             >
               Logout
             </button>
@@ -96,7 +115,7 @@ const Dashboard = () => {
           <section className="lg:col-span-1">
             <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100">
               <div className="flex items-center gap-4">
-                <div className="w-20 h-20 rounded-xl bg-gradient-to-tr from-indigo-400 to-pink-300 flex items-center justify-center text-white text-2xl font-bold">
+                <div className="w-20 h-20 rounded-xl bg-linear-to-tr from-indigo-400 to-pink-300 flex items-center justify-center text-white text-2xl font-bold">
                   {user?.name ? user.name.charAt(0).toUpperCase() : "U"}
                 </div>
                 <div>
@@ -224,6 +243,13 @@ const Dashboard = () => {
                           className="px-2 py-1 bg-indigo-50 text-indigo-700 text-xs rounded shadow hover:bg-indigo-100"
                         >
                           Review
+                        </button>
+                        <button
+                          onClick={() => handleDeleteResume(resume._id)}
+                          className="px-2 py-1 bg-red-50 text-red-700 text-xs rounded shadow hover:bg-red-100"
+                          title="Delete Resume"
+                        >
+                          Delete
                         </button>
                       </div>
                     </div>

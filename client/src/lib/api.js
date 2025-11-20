@@ -72,3 +72,7 @@ export async function uploadResume({ file, companyName, jobTitle, jobDescription
 export async function getResumeById(id) {
   return await request(`/resume/${id}`, { method: "GET" });
 }
+
+export async function deleteResumeById(id) {
+  return await request(`/resume/${id}`, { method: "DELETE" });
+}

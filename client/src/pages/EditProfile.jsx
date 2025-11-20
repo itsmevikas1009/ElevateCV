@@ -93,7 +93,7 @@ const EditProfile = () => {
   return (
     <div className="min-h-screen flex items-center justify-center pt-24 pb-6 px-6">
       <div className="max-w-3xl mx-auto bg-white p-8 rounded-2xl shadow">
-        <h1 className="text-3xl font-semibold mb-6 bg-gradient-to-r from-[#7a5cff] to-[#d88aa6] text-transparent bg-clip-text">
+        <h1 className="text-3xl font-semibold mb-6 bg-linear-to-r from-[#7a5cff] to-[#d88aa6] text-transparent bg-clip-text">
           Edit Profile
         </h1>
 
@@ -199,7 +199,7 @@ const EditProfile = () => {
           <button
             type="submit"
             disabled={saving}
-            className="w-full py-3 rounded-xl text-white font-medium bg-gradient-to-r from-[#6B63FF] to-[#7A7CFF] shadow-lg hover:shadow-xl transition disabled:opacity-60"
+            className="w-full py-3 rounded-xl text-white font-medium bg-linear-to-r from-[#6B63FF] to-[#7A7CFF] shadow-lg hover:shadow-xl transition disabled:opacity-60"
           >
             {saving ? "Saving..." : "Save Changes"}
           </button>

@@ -66,7 +66,7 @@ const ResumeUpload = () => {
         {/* Header */}
         <header className="text-center mb-10">
           <h1 className="text-[48px] md:text-5xl font-extrabold leading-tight tracking-tight">
-            <span className="bg-gradient-to-r from-[#7a5cff] via-[#8b84ff] to-[#d88aa6] bg-clip-text text-transparent">
+            <span className="bg-linear-to-r from-[#7a5cff] via-[#8b84ff] to-[#d88aa6] bg-clip-text text-transparent">
               Smart feedback
             </span>
             <br />
@@ -187,7 +187,7 @@ const ResumeUpload = () => {
             <button
               type="submit"
               disabled={loading}
-              className="flex-1 py-3 mt-2 rounded-full text-white font-medium bg-gradient-to-r from-[#6B63FF] to-[#7A7CFF] shadow-[0_8px_20px_rgba(123,123,255,0.25)] hover:shadow-[0_10px_24px_rgba(123,123,255,0.35)] transition-all duration-200 disabled:opacity-60"
+              className="flex-1 py-3 mt-2 rounded-full text-white font-medium bg-linear-to-r from-[#6B63FF] to-[#7A7CFF] shadow-[0_8px_20px_rgba(123,123,255,0.25)] hover:shadow-[0_10px_24px_rgba(123,123,255,0.35)] transition-all duration-200 disabled:opacity-60"
             >
               {loading ? "Analyzing..." : "Save & Analyze Resume"}
             </button>

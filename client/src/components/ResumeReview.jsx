@@ -70,7 +70,7 @@ const ResumeReview = ({ feedback, resumeDoc }) => {
       </div>
 
       {/* Right: Review Details */}
-      <div className="flex-[2] rounded-xl bg-white/70 shadow-lg px-8 py-6">
+      <div className="flex-2 rounded-xl bg-white/70 shadow-lg px-8 py-6">
         <h2 className="text-2xl font-bold mb-6">Resume Review</h2>
         <div className="flex flex-col gap-2 mb-6">
           <div className="text-4xl font-bold text-blue-700">
