@@ -1,57 +1,31 @@
 import React, { useState } from "react";
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { FiMenu, FiX } from "react-icons/fi";
+import { logout } from "../lib/api"; // or wherever your logout utility is
 
 const menuData = [
-  {
-    id: 1,
-    title: "Home",
-    path: "/",
-    newTab: false,
-  },
-  {
-    id: 2,
-    title: "Resume Upload",
-    path: "/resume-upload",
-    newTab: false,
-  },
-  {
-    id: 33,
-    title: "Blog",
-    path: "/blog",
-    newTab: false,
-  },
-  {
-    id: 3,
-    title: "Support",
-    path: "/contact",
-    newTab: false,
-  },
+  { id: 1, title: "Home", path: "/", newTab: false },
+  { id: 2, title: "Resume Upload", path: "/resume-upload", newTab: false },
+  { id: 33, title: "Blog", path: "/blog", newTab: false },
+  { id: 3, title: "Support", path: "/contact", newTab: false },
 ];
 
 const NavBar = () => {
-  // Toggle navbar visibility
   const [navbarOpen, setNavbarOpen] = useState(false);
-  // Toggle submenu
   const [openIndex, setOpenIndex] = useState(-1);
 
-  // Detect login status by checking token in localStorage
   const isLoggedIn = Boolean(localStorage.getItem("token"));
-
   const location = useLocation();
   const currentPath = location.pathname || "/";
+  const navigate = useNavigate();
 
-  // Toggle navbar visibility handler
   const navbarToggleHandler = () => setNavbarOpen((prev) => !prev);
-
-  // Toggle submenu handler
   const handleSubmenu = (index) =>
     setOpenIndex((prev) => (prev === index ? -1 : index));
 
-  // Logout handler clears the token and redirects to signin
   const handleLogout = () => {
-    localStorage.removeItem("token");
-    window.location.href = "/signin";
+    logout();
+    navigate("/signin");
   };
 
   return (
@@ -65,16 +39,8 @@ const NavBar = () => {
               className="logo block w-full py-5 lg:py-2.5 text-2xl font-bold leading-none italic text-blue-600"
             >
               ElevateCV
-              {/* <img
-                src="/images/logo/logo-2.svg"
-                alt="logo"
-                width={140}
-                height={30}
-                className="w-full"
-              /> */}
             </Link>
           </div>
-
           {/* Navigation */}
           <div className="flex w-full items-center justify-between px-4">
             <div>
@@ -82,6 +48,7 @@ const NavBar = () => {
               <button
                 onClick={navbarToggleHandler}
                 aria-label="Mobile Menu"
+                type="button"
                 className="absolute right-4 top-1/2 block -translate-y-1/2 rounded-lg p-2 ring-primary focus:ring-2 lg:hidden"
               >
                 {navbarOpen ? (
@@ -90,7 +57,6 @@ const NavBar = () => {
                   <FiMenu className="w-7 h-7 text-blue-600" />
                 )}
               </button>
-
               {/* Menu */}
               <nav
                 className={`absolute right-0 z-30 w-[250px] rounded border border-gray-200 bg-white px-6 py-4 duration-300
@@ -139,7 +105,6 @@ const NavBar = () => {
                               </svg>
                             </span>
                           </button>
-
                           {/* Submenu */}
                           <div
                             className={`lg:absolute lg:top-full lg:left-0 lg:w-[250px] lg:rounded-md lg:bg-white lg:shadow-md lg:p-4 ${
@@ -163,7 +128,6 @@ const NavBar = () => {
                 </ul>
               </nav>
             </div>
-
             {/* Right side buttons */}
             <div className="flex items-center justify-end pr-16 lg:pr-0 space-x-4">
               {!isLoggedIn ? (
@@ -191,6 +155,7 @@ const NavBar = () => {
                   </Link>
                   <button
                     onClick={handleLogout}
+                    type="button"
                     className="text-red-600 font-medium text-base hover:opacity-80 transition"
                   >
                     Log Out

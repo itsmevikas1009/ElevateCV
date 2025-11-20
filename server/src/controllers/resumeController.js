@@ -116,16 +116,18 @@ export const uploadResume = async (req, res) => {
 // 🟢 Fetch Resume by ID
 export const getResumeById = async (req, res) => {
   try {
-    const resumeDoc = await Resume.findById(req.params.id).populate(
-      "user",
-      "name email role"
-    );
+    const resumeDoc = await Resume.findById(req.params.id).populate("user", "name email role");
     if (!resumeDoc) {
       return res.status(404).json({ message: "Resume not found" });
     }
+
+    // Ownership check:
+    if (!resumeDoc.user.equals(req.user._id)) {
+      return res.status(403).json({ message: "You do not have permission to view this resume." });
+    }
+
     res.status(200).json({ success: true, resume: resumeDoc });
   } catch (err) {
-    console.error("❌ Fetch resume error:", err);
     res.status(500).json({ message: err.message });
   }
 };

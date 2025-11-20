@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { getProfile, updateProfile } from "../lib/auth";
+import { getProfile, updateProfile } from "../lib/api"; // <- use api.js!
+import toast from "react-hot-toast";
 
 const EditProfile = () => {
   const navigate = useNavigate();
@@ -54,7 +55,6 @@ const EditProfile = () => {
     setError(null);
     setSuccessMsg("");
 
-    // basic validation
     if (!form.name || !form.email) {
       setError("Name and email are required.");
       setSaving(false);
@@ -62,7 +62,6 @@ const EditProfile = () => {
     }
 
     try {
-      // Build payload matching backend fields
       const payload = {
         name: form.name,
         company: form.company,
@@ -70,18 +69,18 @@ const EditProfile = () => {
         profileImage: form.profileImage,
       };
 
-      const data = await updateProfile(payload); // uses request helper to call PATCH /api/auth/profile
-
+      const data = await updateProfile(payload);
       setSuccessMsg("Profile updated successfully!");
-      // Update cached user info
+      toast.success("Profile updated successfully!");
       if (data?.user) {
         localStorage.setItem("user", JSON.stringify(data.user));
       }
 
       // Redirect after a short delay so the user sees the message
-      setTimeout(() => navigate("/dashboard"), 1100);
+      setTimeout(() => navigate("/dashboard"), 1200);
     } catch (err) {
       setError(err.message || "Update failed");
+      toast.error(err.message || "Update failed");
     } finally {
       setSaving(false);
     }
@@ -92,7 +91,7 @@ const EditProfile = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 p-6 md:p-10">
+    <div className="min-h-screen flex items-center justify-center pt-24 pb-6 px-6">
       <div className="max-w-3xl mx-auto bg-white p-8 rounded-2xl shadow">
         <h1 className="text-3xl font-semibold mb-6 bg-gradient-to-r from-[#7a5cff] to-[#d88aa6] text-transparent bg-clip-text">
           Edit Profile
@@ -111,7 +110,6 @@ const EditProfile = () => {
         )}
 
         <form className="space-y-6" onSubmit={handleSubmit}>
-          {/* Name */}
           <div>
             <label className="block text-sm text-gray-600 mb-1">
               Full Name
@@ -126,7 +124,6 @@ const EditProfile = () => {
             />
           </div>
 
-          {/* Email (read-only by default) */}
           <div>
             <label className="block text-sm text-gray-600 mb-1">Email</label>
             <input
@@ -144,7 +141,6 @@ const EditProfile = () => {
             </p>
           </div>
 
-          {/* Role */}
           <div>
             <label className="block text-sm text-gray-600 mb-1">Role</label>
             <input
@@ -157,7 +153,6 @@ const EditProfile = () => {
             />
           </div>
 
-          {/* Company */}
           <div>
             <label className="block text-sm text-gray-600 mb-1">Company</label>
             <input
@@ -170,7 +165,6 @@ const EditProfile = () => {
             />
           </div>
 
-          {/* Contact Number */}
           <div>
             <label className="block text-sm text-gray-600 mb-1">
               Contact Number
@@ -185,7 +179,6 @@ const EditProfile = () => {
             />
           </div>
 
-          {/* Profile Image URL (optional) */}
           <div>
             <label className="block text-sm text-gray-600 mb-1">
               Profile Image URL
@@ -203,7 +196,6 @@ const EditProfile = () => {
             </p>
           </div>
 
-          {/* Save Button */}
           <button
             type="submit"
             disabled={saving}

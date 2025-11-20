@@ -1,16 +1,19 @@
 const API_BASE = "http://localhost:5000/api";
 
-async function request(path, options = {}) {
+export async function request(path, options = {}) {
   const token = localStorage.getItem("token");
-  const headers = {
-    "Content-Type": "application/json",
-    ...(options.headers || {}),
-  };
-  if (token) headers.Authorization = `Bearer ${token}`;
+  let headers = { ...(options.headers || {}) };
+
+  if (!(options.body instanceof FormData)) {
+    headers["Content-Type"] = "application/json";
+  }
+  if (token) {
+    headers.Authorization = `Bearer ${token}`;
+  }
 
   const res = await fetch(`${API_BASE}${path}`, {
-    headers,
     ...options,
+    headers,
   });
 
   const contentType = res.headers.get("content-type") || "";
@@ -51,4 +54,21 @@ export async function updateProfile(payload) {
 export function logout() {
   localStorage.removeItem("token");
   localStorage.removeItem("user");
+}
+
+export async function uploadResume({ file, companyName, jobTitle, jobDescription }) {
+  const formData = new FormData();
+  formData.append("resume", file);
+  formData.append("companyName", companyName);
+  formData.append("jobTitle", jobTitle);
+  formData.append("jobDescription", jobDescription);
+
+  return await request("/resume/upload", {
+    method: "POST",
+    body: formData,
+  });
+}
+
+export async function getResumeById(id) {
+  return await request(`/resume/${id}`, { method: "GET" });
 }

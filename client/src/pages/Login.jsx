@@ -1,6 +1,8 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { login } from "../lib/auth";
+import { login } from "../lib/api";
+import ErrorBox from "../components/ErrorBox";
+import toast from "react-hot-toast";
 
 const Login = () => {
   const navigate = useNavigate();
@@ -17,25 +19,25 @@ const Login = () => {
 
     if (!form.email || !form.password) {
       setError("Please enter email and password.");
+      toast.error("Please enter email and password.");
       return;
     }
 
     setLoading(true);
     try {
-      const result = await login({
-        email: form.email,
-        password: form.password,
-      });
-
+      const result = await login(form);
       if (result?.token) {
         localStorage.setItem("token", result.token);
         localStorage.setItem("user", JSON.stringify(result.user || {}));
+        toast.success("Login successful!");
+        navigate("/dashboard");
+      } else {
+        setError(result?.message || "Login failed.");
+        toast.error(result?.message || "Login failed.");
       }
-
-      // redirect after successful login
-      navigate("/dashboard"); // change as needed
     } catch (err) {
       setError(err.message || "Login failed.");
+      toast.error(err.message || "Login failed.");
     } finally {
       setLoading(false);
     }
@@ -57,37 +59,42 @@ const Login = () => {
           <div className="rounded-[34px] p-5 bg-white/60 backdrop-blur-sm shadow-outer ring ring-white/40">
             <div className="bg-white rounded-2xl p-6 shadow-inner-card">
               <form className="space-y-6" onSubmit={handleSubmit}>
-                {error && (
-                  <div className="text-sm text-red-600 bg-red-50 p-2 rounded">
-                    {error}
-                  </div>
-                )}
-
+                <ErrorBox message={error} />
                 <div>
-                  <label className="block text-sm text-gray-600 mb-2">
+                  <label
+                    htmlFor="email"
+                    className="block text-sm text-gray-600 mb-2"
+                  >
                     Email Address *
                   </label>
                   <input
+                    id="email"
                     name="email"
                     value={form.email}
                     onChange={handleChange}
                     type="email"
                     placeholder="Enter your email"
                     className="w-full rounded-xl px-4 py-3 text-gray-800 placeholder-gray-400 border border-transparent focus:outline-none focus:ring-0 focus:shadow-focus-inset"
+                    autoComplete="email"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-sm text-gray-600 mb-2">
+                  <label
+                    htmlFor="password"
+                    className="block text-sm text-gray-600 mb-2"
+                  >
                     Password *
                   </label>
                   <input
+                    id="password"
                     name="password"
                     value={form.password}
                     onChange={handleChange}
                     type="password"
                     placeholder="Enter your password"
                     className="w-full rounded-xl px-4 py-3 text-gray-700 placeholder-gray-300 border border-transparent focus:outline-none focus:ring-0 focus:shadow-focus-inset"
+                    autoComplete="current-password"
                   />
                 </div>
 

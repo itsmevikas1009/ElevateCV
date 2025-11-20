@@ -130,7 +130,13 @@ export const updateUser = async (req, res) => {
 // 🟢 Get user profile
 export const getUserProfile = async (req, res) => {
   try {
-    const user = await User.findById(req.user.id).select("-password");
+    const user = await User.findById(req.user.id)
+      .select("-password")
+      .populate({
+        path: "resumes",
+        select: "jobTitle jobDescription createdAt feedback resumePath"
+      });
+
     res.status(200).json({ success: true, user });
   } catch (err) {
     res.status(500).json({ message: err.message });

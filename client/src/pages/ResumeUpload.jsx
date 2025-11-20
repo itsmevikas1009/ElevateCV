@@ -1,7 +1,9 @@
 import React, { useState, useRef } from "react";
 import { useNavigate } from "react-router-dom";
+import { uploadResume } from "../lib/api"; //
+import toast from "react-hot-toast";
 
-export default function ResumeUpload() {
+const ResumeUpload = () => {
   const navigate = useNavigate();
   const [company, setCompany] = useState("JavaScript Mastery");
   const [jobTitle, setJobTitle] = useState("Frontend Developer");
@@ -10,7 +12,6 @@ export default function ResumeUpload() {
 
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
-  const [feedback, setFeedback] = useState(null);
 
   const fileInputRef = useRef(null);
 
@@ -24,56 +25,36 @@ export default function ResumeUpload() {
     setJobTitle("Frontend Developer");
     setDescription("");
     setFile(null);
-    setFeedback(null);
     setError("");
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError("");
-    setFeedback(null);
 
     if (!file) {
       setError("Please upload a resume file (PDF, PNG, JPG).");
+      toast.error("Please upload a resume file (PDF, PNG, JPG).");
       return;
     }
 
     setLoading(true);
 
     try {
-      const token = localStorage.getItem("token") || "";
-
-      const formData = new FormData();
-      // IMPORTANT: send the file under the "resume" key to match your Multer config
-      formData.append("resume", file);
-      formData.append("companyName", company);
-      formData.append("jobTitle", jobTitle);
-      formData.append("jobDescription", description);
-
-      const headers = {};
-      if (token) {
-        headers["Authorization"] = `Bearer ${token}`;
-      }
-
-      const res = await fetch("http://localhost:5000/api/resume/upload", {
-        method: "POST",
-        headers,
-        body: formData,
+      const data = await uploadResume({
+        file,
+        companyName: company,
+        jobTitle,
+        jobDescription: description,
       });
-      const data = await res.json();
-      console.log("Response status:", data);
 
-      if (!res.ok) {
-        throw new Error(data?.message || "Upload failed");
+      toast.success("Resume uploaded!");
+      if (data?.resumeId) {
+        navigate(`/resume-review/${data.resumeId}`);
       }
-
-      // On success show AI feedback or navigate to a result page
-      setFeedback(data?.feedback || data);
-      // Optionally redirect to a resume details page:
-      // navigate(`/resume/${data.resumeId}`);
     } catch (err) {
-      console.error("Upload error:", err);
       setError(err.message || "An error occurred while uploading.");
+      toast.error(err.message || "An error occurred while uploading.");
     } finally {
       setLoading(false);
     }
@@ -201,15 +182,6 @@ export default function ResumeUpload() {
             </div>
           )}
 
-          {feedback && (
-            <div className="bg-white rounded-xl p-4 border border-gray-100 shadow-sm">
-              <h3 className="font-semibold mb-2">AI Feedback</h3>
-              <pre className="text-sm whitespace-pre-wrap">
-                {JSON.stringify(feedback, null, 2)}
-              </pre>
-            </div>
-          )}
-
           {/* Save Button */}
           <div className="flex gap-3">
             <button
@@ -232,4 +204,6 @@ export default function ResumeUpload() {
       </div>
     </div>
   );
-}
+};
+
+export default ResumeUpload;
