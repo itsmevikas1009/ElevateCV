@@ -1,4 +1,3 @@
-// src/pages/Dashboard.jsx
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { getProfile, logout } from "../lib/auth";
@@ -95,12 +94,22 @@ const Dashboard = () => {
             <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100">
               <div className="flex items-center gap-4">
                 <div className="w-20 h-20 rounded-xl bg-gradient-to-tr from-indigo-400 to-pink-300 flex items-center justify-center text-white text-2xl font-bold">
-                  {user ? (user.name ? user.name.charAt(0).toUpperCase() : "U") : "U"}
+                  {user
+                    ? user.name
+                      ? user.name.charAt(0).toUpperCase()
+                      : "U"
+                    : "U"}
                 </div>
                 <div>
-                  <div className="text-lg font-semibold text-gray-900">{user?.name || "—"}</div>
-                  <div className="text-sm text-gray-500">{user?.email || "—"}</div>
-                  <div className="mt-2 text-xs text-gray-400">{user?.role || "Member"}</div>
+                  <div className="text-lg font-semibold text-gray-900">
+                    {user?.name || "—"}
+                  </div>
+                  <div className="text-sm text-gray-500">
+                    {user?.email || "—"}
+                  </div>
+                  <div className="mt-2 text-xs text-gray-400">
+                    {user?.role || "Member"}
+                  </div>
                 </div>
               </div>
 
@@ -111,7 +120,9 @@ const Dashboard = () => {
                 <div className="text-sm text-gray-600">
                   <strong>Member since:</strong>{" "}
                   {user?._id
-                    ? new Date(parseInt(user._id.substring(0, 8), 16) * 1000).toLocaleDateString()
+                    ? new Date(
+                        parseInt(user._id.substring(0, 8), 16) * 1000
+                      ).toLocaleDateString()
                     : "—"}
                 </div>
               </div>
@@ -138,37 +149,67 @@ const Dashboard = () => {
           {/* Right column - stats + feed */}
           <section className="lg:col-span-3 space-y-6">
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-              <StatCard title="Profile completeness" value="82%" subtitle="Keep your profile updated" />
-              <StatCard title="Connections" value="24" subtitle="Mentors & recruiters" />
+              <StatCard
+                title="Profile completeness"
+                value="82%"
+                subtitle="Keep your profile updated"
+              />
+              <StatCard
+                title="Connections"
+                value="24"
+                subtitle="Mentors & recruiters"
+              />
               <StatCard title="Applied jobs" value="8" subtitle="This month" />
             </div>
 
             <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100">
               <div className="flex items-center justify-between">
-                <h3 className="text-lg font-semibold text-gray-900">Recent Activity</h3>
+                <h3 className="text-lg font-semibold text-gray-900">
+                  Recent Activity
+                </h3>
                 <div className="text-sm text-gray-500">Latest updates</div>
               </div>
 
               <div className="mt-4 space-y-4">
-                {loading && <div className="text-sm text-gray-500">Loading activity...</div>}
+                {loading && (
+                  <div className="text-sm text-gray-500">
+                    Loading activity...
+                  </div>
+                )}
 
-                {!loading && error && <div className="text-sm text-red-600 bg-red-50 p-3 rounded">{error}</div>}
+                {!loading && error && (
+                  <div className="text-sm text-red-600 bg-red-50 p-3 rounded">
+                    {error}
+                  </div>
+                )}
 
                 {!loading && !error && (
                   <>
                     <div className="p-3 border border-gray-100 rounded-md">
-                      <div className="text-sm text-gray-700">You updated your profile headline.</div>
-                      <div className="text-xs text-gray-400 mt-1">2 days ago</div>
+                      <div className="text-sm text-gray-700">
+                        You updated your profile headline.
+                      </div>
+                      <div className="text-xs text-gray-400 mt-1">
+                        2 days ago
+                      </div>
                     </div>
 
                     <div className="p-3 border border-gray-100 rounded-md">
-                      <div className="text-sm text-gray-700">Applied to Job: Frontend Developer at Acme.</div>
-                      <div className="text-xs text-gray-400 mt-1">5 days ago</div>
+                      <div className="text-sm text-gray-700">
+                        Applied to Job: Frontend Developer at Acme.
+                      </div>
+                      <div className="text-xs text-gray-400 mt-1">
+                        5 days ago
+                      </div>
                     </div>
 
                     <div className="p-3 border border-gray-100 rounded-md">
-                      <div className="text-sm text-gray-700">Connected with mentor Shreya K.</div>
-                      <div className="text-xs text-gray-400 mt-1">1 week ago</div>
+                      <div className="text-sm text-gray-700">
+                        Connected with mentor Shreya K.
+                      </div>
+                      <div className="text-xs text-gray-400 mt-1">
+                        1 week ago
+                      </div>
                     </div>
                   </>
                 )}
@@ -176,27 +217,37 @@ const Dashboard = () => {
             </div>
 
             <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100">
-              <h3 className="text-lg font-semibold text-gray-900 mb-4">Account Details</h3>
+              <h3 className="text-lg font-semibold text-gray-900 mb-4">
+                Account Details
+              </h3>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
                   <div className="text-xs text-gray-500">Full name</div>
-                  <div className="mt-1 text-sm text-gray-800">{user?.name || "-"}</div>
+                  <div className="mt-1 text-sm text-gray-800">
+                    {user?.name || "-"}
+                  </div>
                 </div>
 
                 <div>
                   <div className="text-xs text-gray-500">Email</div>
-                  <div className="mt-1 text-sm text-gray-800">{user?.email || "-"}</div>
+                  <div className="mt-1 text-sm text-gray-800">
+                    {user?.email || "-"}
+                  </div>
                 </div>
 
                 <div>
                   <div className="text-xs text-gray-500">Role</div>
-                  <div className="mt-1 text-sm text-gray-800">{user?.role || "-"}</div>
+                  <div className="mt-1 text-sm text-gray-800">
+                    {user?.role || "-"}
+                  </div>
                 </div>
 
                 <div>
                   <div className="text-xs text-gray-500">Company</div>
-                  <div className="mt-1 text-sm text-gray-800">{user?.company || "-"}</div>
+                  <div className="mt-1 text-sm text-gray-800">
+                    {user?.company || "-"}
+                  </div>
                 </div>
               </div>
             </div>

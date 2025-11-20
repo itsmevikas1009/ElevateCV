@@ -1,4 +1,3 @@
-// src/pages/ResumeUpload.jsx
 import React, { useState, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 
@@ -51,16 +50,18 @@ export default function ResumeUpload() {
       formData.append("jobTitle", jobTitle);
       formData.append("jobDescription", description);
 
+      const headers = {};
+      if (token) {
+        headers["Authorization"] = `Bearer ${token}`;
+      }
+
       const res = await fetch("http://localhost:5000/api/resume/upload", {
         method: "POST",
-        headers: {
-          // DO NOT set Content-Type for multipart/form-data; the browser sets it automatically
-          Authorization: token ? `Bearer ${token}` : "",
-        },
+        headers,
         body: formData,
       });
-
       const data = await res.json();
+      console.log("Response status:", data);
 
       if (!res.ok) {
         throw new Error(data?.message || "Upload failed");
@@ -163,9 +164,13 @@ export default function ResumeUpload() {
               </div>
               <p className="text-gray-800 font-medium">
                 Click to upload{" "}
-                <span className="text-gray-500 font-normal">or drag and drop</span>
+                <span className="text-gray-500 font-normal">
+                  or drag and drop
+                </span>
               </p>
-              <p className="text-sm text-gray-400 mt-1">PDF, PNG or JPG (max. 10MB)</p>
+              <p className="text-sm text-gray-400 mt-1">
+                PDF, PNG or JPG (max. 10MB)
+              </p>
 
               {file && (
                 <p className="mt-4 text-sm text-gray-700">
@@ -190,12 +195,18 @@ export default function ResumeUpload() {
           </div>
 
           {/* Feedback / Error */}
-          {error && <div className="text-sm text-red-600 bg-red-50 p-3 rounded">{error}</div>}
+          {error && (
+            <div className="text-sm text-red-600 bg-red-50 p-3 rounded">
+              {error}
+            </div>
+          )}
 
           {feedback && (
             <div className="bg-white rounded-xl p-4 border border-gray-100 shadow-sm">
               <h3 className="font-semibold mb-2">AI Feedback</h3>
-              <pre className="text-sm whitespace-pre-wrap">{JSON.stringify(feedback, null, 2)}</pre>
+              <pre className="text-sm whitespace-pre-wrap">
+                {JSON.stringify(feedback, null, 2)}
+              </pre>
             </div>
           )}
 

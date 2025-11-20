@@ -24,7 +24,7 @@ async function extractTextFromFile(filePath, mimeType) {
     if (
       ext === ".docx" ||
       mimeType ===
-        "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+      "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
     ) {
       const result = await mammoth.extractRawText({ path: filePath });
       return result.value.trim();
@@ -94,7 +94,7 @@ export const uploadResume = async (req, res) => {
     }
 
     // Clean temp file
-    // await fs.unlink(filePath).catch(console.error);
+    await fs.unlink(filePath).catch(console.error);
 
     res.status(201).json({
       success: true,
@@ -105,7 +105,7 @@ export const uploadResume = async (req, res) => {
     });
   } catch (err) {
     console.error("❌ Upload route error:", err);
-    await fs.unlink(filePath).catch(() => {});
+    await fs.unlink(filePath).catch(() => { });
     res.status(500).json({
       message: "Server error during upload and analysis.",
       error: err.message,
