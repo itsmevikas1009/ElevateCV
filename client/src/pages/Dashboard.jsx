@@ -1,4 +1,5 @@
-import React, { useEffect, useState } from "react";
+// src/pages/Dashboard.jsx
+import React, { useEffect, useState, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import { getProfile, logout, deleteResumeById } from "../lib/api";
 import toast from "react-hot-toast";
@@ -28,9 +29,8 @@ const Dashboard = () => {
     try {
       await deleteResumeById(resumeId);
       toast.success("Resume deleted!");
-      // Re-fetch profile to update UI
       const res = await getProfile();
-      setUser(res.user || null); // Refresh user and resumes list
+      setUser(res.user || null);
     } catch (err) {
       toast.error(err.message || "Failed to delete resume.");
     }
@@ -48,12 +48,11 @@ const Dashboard = () => {
       try {
         setLoading(true);
         setError(null);
-        const res = await getProfile(); // expects { success: true, user }
+        const res = await getProfile(); // { success: true, user }
         setUser(res.user || null);
         if (res.user) localStorage.setItem("user", JSON.stringify(res.user));
       } catch (err) {
         setError(err.message || "Failed to load profile");
-        // On auth error, clear and redirect
         if (
           err.message.toLowerCase().includes("token") ||
           err.message.toLowerCase().includes("unauthorized") ||
@@ -77,6 +76,49 @@ const Dashboard = () => {
 
   const handleEdit = () => navigate("/profile/edit");
 
+  // 🧠 Compute stats from DB data
+  const {
+    totalResumes,
+    bestScore,
+    averageScore,
+    lastAnalysisDate,
+    lastResumeTitle,
+  } = useMemo(() => {
+    const resumes = user?.resumes || [];
+    const scores = resumes
+      .map((r) => r?.feedback?.overallScore)
+      .filter((s) => typeof s === "number");
+
+    const totalResumes = resumes.length;
+    const bestScore = scores.length > 0 ? Math.max.apply(null, scores) : "—";
+    const averageScore =
+      scores.length > 0
+        ? Math.round(scores.reduce((acc, s) => acc + s, 0) / scores.length)
+        : "—";
+
+    let lastAnalysisDate = "—";
+    let lastResumeTitle = "—";
+
+    if (resumes.length > 0) {
+      const sorted = [...resumes].sort(
+        (a, b) => new Date(b.createdAt) - new Date(a.createdAt)
+      );
+      const last = sorted[0];
+      lastAnalysisDate = last.createdAt
+        ? new Date(last.createdAt).toLocaleString()
+        : "—";
+      lastResumeTitle = last.jobTitle || "Untitled role";
+    }
+
+    return {
+      totalResumes,
+      bestScore,
+      averageScore,
+      lastAnalysisDate,
+      lastResumeTitle,
+    };
+  }, [user]);
+
   if (loading) return <Loader text="Loading your dashboard..." />;
   if (error)
     return (
@@ -84,6 +126,14 @@ const Dashboard = () => {
         {error}
       </div>
     );
+
+  // 🔥 avatarUrl supports both http(s) and local /uploads/avatars/...
+  const avatarUrl =
+    user?.profileImage && typeof user.profileImage === "string"
+      ? user.profileImage.startsWith("http")
+        ? user.profileImage
+        : `http://localhost:5000${user.profileImage}`
+      : null;
 
   return (
     <div className="min-h-screen bg-gray-50 p-6 md:p-10">
@@ -115,9 +165,27 @@ const Dashboard = () => {
           <section className="lg:col-span-1">
             <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100">
               <div className="flex items-center gap-4">
-                <div className="w-20 h-20 rounded-xl bg-linear-to-tr from-indigo-400 to-pink-300 flex items-center justify-center text-white text-2xl font-bold">
-                  {user?.name ? user.name.charAt(0).toUpperCase() : "U"}
+                <div className="w-20 h-20 rounded-xl overflow-hidden bg-linear-to-tr from-indigo-400 to-pink-300 flex items-center justify-center text-white text-2xl font-bold">
+                  {avatarUrl ? (
+                    <img
+                      src={avatarUrl}
+                      alt={user?.name || "User avatar"}
+                      className="w-full h-full object-cover"
+                      onError={(e) => {
+                        // fallback to initial if image fails
+                        e.currentTarget.style.display = "none";
+                        e.currentTarget.parentElement.textContent = user?.name
+                          ? user.name.charAt(0).toUpperCase()
+                          : "U";
+                      }}
+                    />
+                  ) : user?.name ? (
+                    user.name.charAt(0).toUpperCase()
+                  ) : (
+                    "U"
+                  )}
                 </div>
+
                 <div>
                   <div className="text-lg font-semibold text-gray-900">
                     {user?.name || "—"}
@@ -136,10 +204,8 @@ const Dashboard = () => {
                 </div>
                 <div className="text-sm text-gray-600">
                   <strong>Member since:</strong>{" "}
-                  {user?._id
-                    ? new Date(
-                        parseInt(user._id.substring(0, 8), 16) * 1000
-                      ).toLocaleDateString()
+                  {user?.createdAt
+                    ? new Date(user.createdAt).toLocaleDateString()
                     : "—"}
                 </div>
                 <div className="text-sm text-gray-600">
@@ -148,42 +214,37 @@ const Dashboard = () => {
                 </div>
               </div>
             </div>
-            <div className="mt-4 space-y-3">
-              <a
-                className="block px-4 py-3 bg-white rounded-2xl border border-gray-100 shadow-sm hover:shadow-md transition"
-                href="#"
-                onClick={(e) => e.preventDefault()}
-              >
-                View Activity
-              </a>
-              <a
-                className="block px-4 py-3 bg-white rounded-2xl border border-gray-100 shadow-sm hover:shadow-md transition"
-                href="#"
-                onClick={(e) => e.preventDefault()}
-              >
-                Settings
-              </a>
-            </div>
           </section>
 
           {/* Right column - stats + feed */}
           <section className="lg:col-span-3 space-y-6">
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+            {/* Stats from real DB data */}
+            <div className="grid grid-cols-1 sm:grid-cols-4 gap-4">
               <StatCard
-                title="Profile completeness"
-                value="82%"
-                subtitle="Keep your profile updated"
+                title="Total resumes analyzed"
+                value={totalResumes}
+                subtitle="All time"
               />
               <StatCard
-                title="Connections"
-                value="24"
-                subtitle="Mentors & recruiters"
+                title="Best resume score"
+                value={
+                  typeof bestScore === "number" ? `${bestScore}/100` : "—"
+                }
+                subtitle="Your top performance"
               />
-              <StatCard title="Applied jobs" value="8" subtitle="This month" />
               <StatCard
-                title="Resumes Uploaded"
-                value={user?.resumes?.length || 0}
-                subtitle="Total analyzed resumes"
+                title="Average resume score"
+                value={
+                  typeof averageScore === "number"
+                    ? `${averageScore}/100`
+                    : "—"
+                }
+                subtitle="Across all analyses"
+              />
+              <StatCard
+                title="Last analysis"
+                value={lastResumeTitle}
+                subtitle={lastAnalysisDate}
               />
             </div>
 
@@ -194,66 +255,71 @@ const Dashboard = () => {
               </h3>
               {!user?.resumes || user.resumes.length === 0 ? (
                 <div className="text-sm text-gray-600">
-                  No resumes uploaded yet.
+                  No resumes uploaded yet. Upload your first one to see insights
+                  here.
                 </div>
               ) : (
-                <div className="space-y-5">
-                  {user.resumes.slice(0, 5).map((resume) => (
-                    <div
-                      key={resume._id}
-                      className="p-4 border border-gray-100 rounded-md flex flex-col sm:flex-row items-start sm:items-center justify-between"
-                    >
-                      <div>
-                        <div className="font-semibold text-gray-800">
-                          {resume.jobTitle || "Untitled Role"}
-                        </div>
-                        <div
-                          className="text-xs text-gray-500 mt-1 truncate"
-                          style={{ maxWidth: 200 }}
-                        >
-                          {resume.jobDescription}
-                        </div>
-                        <div className="text-xs text-gray-400 mt-1">
-                          Uploaded on{" "}
-                          {resume.createdAt
-                            ? new Date(resume.createdAt).toLocaleDateString()
-                            : "—"}
-                        </div>
-                      </div>
-                      <div className="flex items-center gap-3 mt-3 sm:mt-0">
-                        {resume.feedback?.overallScore !== undefined && (
-                          <div className="font-bold text-blue-700 text-xl">
-                            {resume.feedback.overallScore}/100
+                <div className="space-y-5 max-h-[420px] overflow-y-auto pr-1">
+                  {user.resumes
+                    .slice()
+                    .sort(
+                      (a, b) => new Date(b.createdAt) - new Date(a.createdAt)
+                    )
+                    .map((resume) => (
+                      <div
+                        key={resume._id}
+                        className="p-4 border border-gray-100 rounded-md flex flex-col sm:flex-row items-start sm:items-center justify-between"
+                      >
+                        <div>
+                          <div className="font-semibold text-gray-800">
+                            {resume.jobTitle || "Untitled Role"}
                           </div>
-                        )}
-                        {resume.resumePath && (
-                          <a
-                            href={`http://localhost:5000${resume.resumePath}`}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="text-blue-600 underline text-xs"
+                          <div className="text-xs text-gray-500 mt-1 truncate max-w-xs">
+                            {resume.jobDescription}
+                          </div>
+                          <div className="text-xs text-gray-400 mt-1">
+                            Uploaded on{" "}
+                            {resume.createdAt
+                              ? new Date(
+                                  resume.createdAt
+                                ).toLocaleDateString()
+                              : "—"}
+                          </div>
+                        </div>
+                        <div className="flex items-center gap-3 mt-3 sm:mt-0">
+                          {resume.feedback?.overallScore !== undefined && (
+                            <div className="font-bold text-blue-700 text-xl">
+                              {resume.feedback.overallScore}/100
+                            </div>
+                          )}
+                          {resume.resumePath && (
+                            <a
+                              href={`http://localhost:5000${resume.resumePath}`}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="text-blue-600 underline text-xs"
+                            >
+                              View
+                            </a>
+                          )}
+                          <button
+                            onClick={() =>
+                              navigate(`/resume-review/${resume._id}`)
+                            }
+                            className="px-2 py-1 bg-indigo-50 text-indigo-700 text-xs rounded shadow hover:bg-indigo-100"
                           >
-                            View
-                          </a>
-                        )}
-                        <button
-                          onClick={() =>
-                            navigate(`/resume-review/${resume._id}`)
-                          }
-                          className="px-2 py-1 bg-indigo-50 text-indigo-700 text-xs rounded shadow hover:bg-indigo-100"
-                        >
-                          Review
-                        </button>
-                        <button
-                          onClick={() => handleDeleteResume(resume._id)}
-                          className="px-2 py-1 bg-red-50 text-red-700 text-xs rounded shadow hover:bg-red-100"
-                          title="Delete Resume"
-                        >
-                          Delete
-                        </button>
+                            Report
+                          </button>
+                          <button
+                            onClick={() => handleDeleteResume(resume._id)}
+                            className="px-2 py-1 bg-red-50 text-red-700 text-xs rounded shadow hover:bg-red-100"
+                            title="Delete Resume"
+                          >
+                            Delete
+                          </button>
+                        </div>
                       </div>
-                    </div>
-                  ))}
+                    ))}
                 </div>
               )}
             </div>

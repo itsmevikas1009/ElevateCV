@@ -27,11 +27,10 @@ const SignUp = () => {
     try {
       const result = await register(form);
 
-      if (result?.token) {
-        localStorage.setItem("token", result.token);
-        localStorage.setItem("user", JSON.stringify(result.user || {}));
-        toast.success("Account created!");
-        navigate("/dashboard"); // use SPA navigation
+      if (result?.success) {
+        toast.success("Account created! Please login to continue.");
+        // 👉 Do NOT store token here; send user to login page
+        navigate("/signin");
       } else {
         setError(result?.message || "Registration failed.");
         toast.error(result?.message || "Registration failed.");
@@ -48,7 +47,7 @@ const SignUp = () => {
     <div className="min-h-screen flex items-center justify-center pt-20 pb-6 px-6">
       <div className="w-full max-w-3xl flex flex-col items-center">
         <header className="text-center mb-8">
-          <h1 className="md:text-5xl text-4xl font-bold mb-2 leading-tight tracking-tight bg-linear-to-r from-[#7a5cff] via-[#8b84ff] to-[#d88aa6] bg-clip-text text-transparent">
+          <h1 className="text-4xl md:text-5xl font-extrabold bg-linear-to-r from-[#4f46e5] via-[#6366f1] to-[#ec4899] bg-clip-text text-transparent drop-shadow-sm">
             Create your Account
           </h1>
           <p className="text-gray-600 text-lg">

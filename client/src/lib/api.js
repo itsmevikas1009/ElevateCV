@@ -1,3 +1,4 @@
+// src/lib/api.js
 const API_BASE = "http://localhost:5000/api";
 
 export async function request(path, options = {}) {
@@ -17,7 +18,9 @@ export async function request(path, options = {}) {
   });
 
   const contentType = res.headers.get("content-type") || "";
-  const data = contentType.includes("application/json") ? await res.json() : null;
+  const data = contentType.includes("application/json")
+    ? await res.json()
+    : null;
 
   if (!res.ok) {
     const message = data?.message || data?.error || "Request failed";
@@ -46,7 +49,7 @@ export async function getProfile() {
 
 export async function updateProfile(payload) {
   return await request("/auth/profile", {
-    method: "PATCH",
+    method: "POST",
     body: JSON.stringify(payload),
   });
 }
@@ -56,7 +59,12 @@ export function logout() {
   localStorage.removeItem("user");
 }
 
-export async function uploadResume({ file, companyName, jobTitle, jobDescription }) {
+export async function uploadResume({
+  file,
+  companyName,
+  jobTitle,
+  jobDescription,
+}) {
   const formData = new FormData();
   formData.append("resume", file);
   formData.append("companyName", companyName);
@@ -75,4 +83,41 @@ export async function getResumeById(id) {
 
 export async function deleteResumeById(id) {
   return await request(`/resume/${id}`, { method: "DELETE" });
+}
+
+export async function uploadProfileImageApi(file) {
+  const formData = new FormData();
+  formData.append("image", file);
+
+  return await request("/auth/profile/image", {
+    method: "POST",
+    body: formData,
+  });
+}
+
+
+// 🆕 Download report PDF
+export async function downloadReportPdf(id) {
+  const token = localStorage.getItem("token");
+  const res = await fetch(`${API_BASE}/resume/${id}/report/pdf`, {
+    method: "GET",
+    headers: {
+      Authorization: token ? `Bearer ${token}` : "",
+    },
+  });
+
+  if (!res.ok) {
+    const text = await res.text();
+    throw new Error(text || "Failed to download report PDF.");
+  }
+
+  const blob = await res.blob();
+  const url = window.URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = `elevatecv-report-${id}.pdf`;
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  window.URL.revokeObjectURL(url);
 }

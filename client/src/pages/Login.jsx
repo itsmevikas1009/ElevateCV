@@ -18,8 +18,8 @@ const Login = () => {
     setError(null);
 
     if (!form.email || !form.password) {
-      setError("Please enter email and password.");
-      toast.error("Please enter email and password.");
+      setError("Both fields are required.");
+      toast.error("Both fields are required.");
       return;
     }
 
@@ -29,7 +29,7 @@ const Login = () => {
       if (result?.token) {
         localStorage.setItem("token", result.token);
         localStorage.setItem("user", JSON.stringify(result.user || {}));
-        toast.success("Login successful!");
+        toast.success("Welcome back!");
         navigate("/dashboard");
       } else {
         setError(result?.message || "Login failed.");
@@ -44,64 +44,71 @@ const Login = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center pt-16 pb-6 px-6">
+    <div className="min-h-screen flex items-center justify-center pt-40 md:pt-48 pb-10 px-4 bg-linear-to-br from-[#f5f3ff] via-[#e0f2fe] to-[#fde1ff]">
       <div className="w-full max-w-3xl flex flex-col items-center">
-        <header className="text-center mb-8">
-          <h1 className="text-5xl font-bold mb-2 leading-tight tracking-tight bg-linear-to-r from-[#7a5cff] via-[#8b84ff] to-[#d88aa6] bg-clip-text text-transparent">
-            Welcome Back
+        {/* Title */}
+        <header className="text-center mb-10">
+          <h1 className="text-4xl md:text-5xl font-extrabold bg-linear-to-r from-[#4f46e5] via-[#6366f1] to-[#ec4899] bg-clip-text text-transparent drop-shadow-sm">
+            Log in to ElevateCV
           </h1>
-          <p className="text-gray-600 text-lg">
-            Log In to Continue Your Job Journey
+          <p className="text-slate-600 text-sm md:text-base mt-2">
+            Continue your journey toward your dream job ✨
           </p>
         </header>
 
+        {/* Form Container */}
         <div className="relative w-full max-w-lg">
-          <div className="rounded-[34px] p-5 bg-white/60 backdrop-blur-sm shadow-outer ring ring-white/40">
-            <div className="bg-white rounded-2xl p-6 shadow-inner-card">
+          <div className="rounded-3xl p-0.5 bg-linear-to-r from-[#4f46e5]/50 via-[#6366f1]/50 to-[#ec4899]/50 shadow-[0_10px_40px_rgba(99,102,241,0.3)]">
+            <div className="rounded-3xl bg-white/95 p-8 backdrop-blur-xl">
               <form className="space-y-6" onSubmit={handleSubmit}>
                 <ErrorBox message={error} />
+
+                {/* Email */}
                 <div>
                   <label
                     htmlFor="email"
-                    className="block text-sm text-gray-600 mb-2"
+                    className="block text-xs font-semibold text-slate-600 mb-2 uppercase tracking-wide"
                   >
-                    Email Address *
+                    Email *
                   </label>
                   <input
                     id="email"
                     name="email"
+                    type="email"
+                    placeholder="you@example.com"
                     value={form.email}
                     onChange={handleChange}
-                    type="email"
-                    placeholder="Enter your email"
-                    className="w-full rounded-xl px-4 py-3 text-gray-800 placeholder-gray-400 border border-transparent focus:outline-none focus:ring-0 focus:shadow-focus-inset"
                     autoComplete="email"
+                    className="w-full rounded-xl px-4 py-3 text-slate-800 placeholder-slate-400 bg-slate-50 border border-slate-200 focus:outline-none focus:ring-2 focus:ring-indigo-500"
                   />
                 </div>
 
+                {/* Password */}
                 <div>
                   <label
                     htmlFor="password"
-                    className="block text-sm text-gray-600 mb-2"
+                    className="block text-xs font-semibold text-slate-600 mb-2 uppercase tracking-wide"
                   >
                     Password *
                   </label>
                   <input
                     id="password"
                     name="password"
+                    type="password"
+                    placeholder="Enter password"
                     value={form.password}
                     onChange={handleChange}
-                    type="password"
-                    placeholder="Enter your password"
-                    className="w-full rounded-xl px-4 py-3 text-gray-700 placeholder-gray-300 border border-transparent focus:outline-none focus:ring-0 focus:shadow-focus-inset"
                     autoComplete="current-password"
+                    className="w-full rounded-xl px-4 py-3 text-slate-800 placeholder-slate-400 bg-slate-50 border border-slate-200 focus:outline-none focus:ring-2 focus:ring-pink-500"
                   />
                 </div>
 
+                {/* Login Button */}
                 <button
                   type="submit"
                   disabled={loading}
-                  className="w-full py-3 mt-2 rounded-full text-white font-medium bg-linear-to-r from-[#6B63FF] to-[#7A7CFF] shadow-[0_8px_20px_rgba(123,123,255,0.25)] hover:shadow-[0_10px_24px_rgba(123,123,255,0.35)] transition-all duration-200 disabled:opacity-60"
+                  className="w-full py-3 rounded-full font-semibold text-white text-sm bg-linear-to-r from-[#4f46e5] via-[#6366f1] to-[#ec4899] shadow-[0_8px_24px_rgba(99,102,241,0.3)]
+                  hover:brightness-110 transition-all duration-200 disabled:opacity-60 disabled:cursor-not-allowed"
                 >
                   {loading ? "Logging in..." : "Log In"}
                 </button>
@@ -109,14 +116,15 @@ const Login = () => {
             </div>
           </div>
 
-          <div className="mt-6 text-center">
-            <p className="text-gray-600">
-              Don’t have an account?{" "}
+          {/* Signup Redirect */}
+          <div className="mt-5 text-center">
+            <p className="text-slate-600 text-sm">
+              New here?{" "}
               <Link
                 to="/signup"
-                className="text-[#6f66ff] font-medium hover:underline"
+                className="text-indigo-600 font-semibold hover:underline"
               >
-                Sign up
+                Create an account →
               </Link>
             </p>
           </div>

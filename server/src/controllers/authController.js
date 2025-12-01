@@ -4,36 +4,6 @@ import User from "../models/User.js";
 
 const JWT_SECRET = process.env.JWT_SECRET || "your_secret_key";
 
-// 🟢 Register new user
-// export const registerUser = async (req, res) => {
-//   try {
-//     const { name, email, password, company, role } = req.body;
-
-//     if (!name || !email || !password)
-//       return res.status(400).json({ message: "All required fields missing." });
-
-//     const existingUser = await User.findOne({ email });
-//     if (existingUser)
-//       return res.status(400).json({ message: "Email already registered." });
-
-//     const hashedPassword = await bcrypt.hash(password, 10);
-//     const user = await User.create({
-//       name,
-//       email,
-//       password: hashedPassword,
-//       company,
-//       role,
-//     });
-
-//     res.status(201).json({
-//       success: true,
-//       message: "User registered successfully.",
-//       user: { id: user._id, name: user.name, email: user.email, role: user.role },
-//     });
-//   } catch (err) {
-//     res.status(500).json({ message: err.message });
-//   }
-// };
 
 export const registerUser = async (req, res) => {
   try {
@@ -108,14 +78,22 @@ export const logoutUser = (req, res) => {
 // 🟢 Update user details
 export const updateUser = async (req, res) => {
   try {
-    const userId = req.user.id; // comes from middleware
-    const { name, company, contactNumber, profileImage } = req.body;
+    const userId = req.user.id; // from middleware
+    const { name, company, contactNumber, profileImage, role } = req.body;
 
-    const updatedUser = await User.findByIdAndUpdate(
-      userId,
-      { name, company, contactNumber, profileImage },
-      { new: true }
-    );
+    const updateData = {};
+
+    if (typeof name !== "undefined") updateData.name = name;
+    if (typeof company !== "undefined") updateData.company = company;
+    if (typeof contactNumber !== "undefined")
+      updateData.contactNumber = contactNumber;
+    if (typeof profileImage !== "undefined")
+      updateData.profileImage = profileImage;
+    if (typeof role !== "undefined") updateData.role = role; // allow role change
+
+    const updatedUser = await User.findByIdAndUpdate(userId, updateData, {
+      new: true,
+    }).select("-password");
 
     res.status(200).json({
       success: true,
@@ -123,9 +101,11 @@ export const updateUser = async (req, res) => {
       user: updatedUser,
     });
   } catch (err) {
+    console.error("Update profile error:", err);
     res.status(500).json({ message: err.message });
   }
 };
+
 
 // 🟢 Get user profile
 export const getUserProfile = async (req, res) => {
@@ -140,5 +120,32 @@ export const getUserProfile = async (req, res) => {
     res.status(200).json({ success: true, user });
   } catch (err) {
     res.status(500).json({ message: err.message });
+  }
+};
+
+// 🆕 Upload profile image from device
+export const uploadProfileImage = async (req, res) => {
+  try {
+    if (!req.file) {
+      return res.status(400).json({ message: "No image file provided." });
+    }
+
+    const imagePath = `/uploads/avatars/${req.file.filename}`; // relative URL
+
+    const updatedUser = await User.findByIdAndUpdate(
+      req.user.id,
+      { profileImage: imagePath },
+      { new: true }
+    ).select("-password");
+
+    return res.status(200).json({
+      success: true,
+      message: "Profile image updated successfully.",
+      user: updatedUser,
+      imagePath,
+    });
+  } catch (err) {
+    console.error("Upload profile image error:", err);
+    return res.status(500).json({ message: err.message || "Server error." });
   }
 };

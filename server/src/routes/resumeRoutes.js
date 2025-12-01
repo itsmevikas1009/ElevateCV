@@ -1,19 +1,4 @@
-// import express from "express";
-// import multer from "multer";
-// import { protect } from "../middleware/authMiddleware.js";
-// import { uploadResume, getResumeById } from "../controllers/resumeController.js";
-
-// const router = express.Router();
-// const upload = multer({ dest: "uploads/" });
-
-// // 🟢 Upload Resume (protected)
-// router.post("/upload", protect, upload.single("resume"), uploadResume);
-
-// // 🟢 Get Resume by ID
-// router.get("/:id", protect, getResumeById);
-
-// export default router;
-
+// server/src/routes/resumeRoutes.js
 import express from "express";
 import multer from "multer";
 import path from "path";
@@ -23,6 +8,7 @@ import {
   uploadResume,
   getResumeById,
   deleteResumeById,
+  downloadResumeReportPdf,
 } from "../controllers/resumeController.js";
 
 const router = express.Router();
@@ -49,10 +35,11 @@ const upload = multer({ storage });
 // 🟢 Upload Resume (protected)
 router.post("/upload", protect, upload.single("resume"), uploadResume);
 
-// 🟢 Get Resume by ID
+// 🆕 🟢 Download Report PDF (protected)
+router.get("/:id/report/pdf", protect, downloadResumeReportPdf);
+
 router.get("/:id", protect, getResumeById);
 
-// 🟢 Delete Resume by ID
 router.delete("/:id", protect, deleteResumeById);
 
 export default router;

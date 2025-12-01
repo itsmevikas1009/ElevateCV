@@ -1,3 +1,4 @@
+// src/main.jsx
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 import {
@@ -15,7 +16,12 @@ import SignUp from "./pages/SignUp.jsx";
 import Dashboard from "./pages/Dashboard.jsx";
 import EditProfile from "./pages/EditProfile.jsx";
 import ResumeReviewPage from "./pages/ResumeReviewPage.jsx";
+import Landing from "./pages/Landing.jsx";
 import { Toaster } from "react-hot-toast";
+import ResumeReview from "./components/ResumeReview.jsx";
+import BlogPage from "./pages/BlogPage.jsx";
+import SupportPage from "./pages/SupportPage.jsx";
+import HowItWorksPage from "./pages/HowItWorksPage.jsx";
 
 // Public route wrapper
 const PublicRoute = ({ children }) => {
@@ -48,10 +54,10 @@ const appRouter = createBrowserRouter([
     path: "/",
     element: <App />,
     children: [
-      // Default route — redirect to /signin
+      // Default route — Landing page
       {
         path: "/",
-        element: <Navigate to="/signin" replace />,
+        element: <Landing />,
       },
 
       // Public routes
@@ -70,6 +76,19 @@ const appRouter = createBrowserRouter([
             <SignUp />
           </PublicRoute>
         ),
+      },
+      // 🔓 Public marketing/info pages
+      {
+        path: "/blog",
+        element: <BlogPage />,
+      },
+      {
+        path: "/support",
+        element: <SupportPage />,
+      },
+      {
+        path: "/how-it-works",
+        element: <HowItWorksPage />,
       },
       // 🔐 Protected routes
       {

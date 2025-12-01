@@ -24,6 +24,7 @@
     "node-fetch": "^3.3.2",
     "openai": "^6.1.0",
     "pdf-parse": "^2.1.7",
+    "pdfkit": "^0.17.2",
     "tesseract.js": "^6.0.1"
   },
   "devDependencies": {

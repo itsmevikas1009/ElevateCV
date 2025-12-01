@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { getProfile, updateProfile } from "../lib/api"; // <- use api.js!
+import { getProfile, updateProfile, uploadProfileImageApi } from "../lib/api"; // <- use api.js!
 import toast from "react-hot-toast";
 
 const EditProfile = () => {
   const navigate = useNavigate();
+  const [uploadingImage, setUploadingImage] = useState(false);
 
   const [form, setForm] = useState({
     name: "",
@@ -19,6 +20,34 @@ const EditProfile = () => {
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState(null);
   const [successMsg, setSuccessMsg] = useState("");
+
+  const handleImageFileChange = async (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    setUploadingImage(true);
+    setError(null);
+
+    try {
+      const res = await uploadProfileImageApi(file);
+      if (res?.user) {
+        // update local form state
+        setForm((prev) => ({
+          ...prev,
+          profileImage: res.user.profileImage || prev.profileImage,
+        }));
+        localStorage.setItem("user", JSON.stringify(res.user));
+        toast.success("Profile picture updated!");
+      } else {
+        toast.error(res?.message || "Failed to upload image.");
+      }
+    } catch (err) {
+      console.error(err);
+      toast.error(err.message || "Failed to upload image.");
+    } finally {
+      setUploadingImage(false);
+    }
+  };
 
   // Fetch current profile
   useEffect(() => {
@@ -67,6 +96,7 @@ const EditProfile = () => {
         company: form.company,
         contactNumber: form.contactNumber,
         profileImage: form.profileImage,
+        role: form.role, // <-- add this
       };
 
       const data = await updateProfile(payload);
@@ -76,7 +106,6 @@ const EditProfile = () => {
         localStorage.setItem("user", JSON.stringify(data.user));
       }
 
-      // Redirect after a short delay so the user sees the message
       setTimeout(() => navigate("/dashboard"), 1200);
     } catch (err) {
       setError(err.message || "Update failed");
@@ -181,19 +210,63 @@ const EditProfile = () => {
 
           <div>
             <label className="block text-sm text-gray-600 mb-1">
-              Profile Image URL
+              Profile Image
             </label>
+
+            {/* URL input */}
             <input
               name="profileImage"
               value={form.profileImage}
               onChange={handleChange}
               type="text"
-              className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-indigo-300 outline-none"
-              placeholder="https://example.com/avatar.jpg"
+              className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-indigo-300 outline-none mb-2"
+              placeholder="Paste image URL (e.g., LinkedIn photo link)"
             />
-            <p className="text-xs text-gray-400 mt-1">
-              Or leave blank to keep current avatar.
-            </p>
+
+            {/* OR line */}
+            <div className="flex items-center gap-2 my-2">
+              <span className="h-px flex-1 bg-gray-200" />
+              <span className="text-xs text-gray-400">
+                or upload from device
+              </span>
+              <span className="h-px flex-1 bg-gray-200" />
+            </div>
+
+            {/* File upload */}
+            <label className="inline-flex items-center gap-2 text-xs text-indigo-600 cursor-pointer">
+              <input
+                type="file"
+                accept="image/*"
+                className="hidden"
+                onChange={handleImageFileChange}
+              />
+              <span className="px-3 py-1 rounded-full border border-indigo-200 bg-indigo-50 hover:bg-indigo-100 transition">
+                {uploadingImage ? "Uploading..." : "Choose Image"}
+              </span>
+            </label>
+
+            {/* Preview */}
+            {form.profileImage && (
+              <div className="mt-3 flex items-center gap-3">
+                <div className="w-14 h-14 rounded-full overflow-hidden border border-gray-200">
+                  <img
+                    src={
+                      form.profileImage.startsWith("http")
+                        ? form.profileImage
+                        : `http://localhost:5000${form.profileImage}`
+                    }
+                    alt="Preview"
+                    className="w-full h-full object-cover"
+                    onError={(e) => {
+                      e.currentTarget.style.display = "none";
+                    }}
+                  />
+                </div>
+                <span className="text-xs text-gray-500">
+                  Preview of your profile picture
+                </span>
+              </div>
+            )}
           </div>
 
           <button
