@@ -1,4 +1,3 @@
-// server/src/routes/resumeRoutes.js
 import express from "express";
 import multer from "multer";
 import path from "path";
@@ -13,13 +12,11 @@ import {
 
 const router = express.Router();
 
-// ✅ Ensure uploads folder exists
 const uploadsDir = path.join(process.cwd(), "uploads");
 if (!fs.existsSync(uploadsDir)) {
   fs.mkdirSync(uploadsDir, { recursive: true });
 }
 
-// ✅ Multer storage config
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
     cb(null, uploadsDir);
@@ -32,10 +29,8 @@ const storage = multer.diskStorage({
 
 const upload = multer({ storage });
 
-// 🟢 Upload Resume (protected)
 router.post("/upload", protect, upload.single("resume"), uploadResume);
 
-// 🆕 🟢 Download Report PDF (protected)
 router.get("/:id/report/pdf", protect, downloadResumeReportPdf);
 
 router.get("/:id", protect, getResumeById);

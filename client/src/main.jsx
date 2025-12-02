@@ -18,10 +18,10 @@ import EditProfile from "./pages/EditProfile.jsx";
 import ResumeReviewPage from "./pages/ResumeReviewPage.jsx";
 import Landing from "./pages/Landing.jsx";
 import { Toaster } from "react-hot-toast";
-import ResumeReview from "./components/ResumeReview.jsx";
 import BlogPage from "./pages/BlogPage.jsx";
 import SupportPage from "./pages/SupportPage.jsx";
 import HowItWorksPage from "./pages/HowItWorksPage.jsx";
+import BuildResume from "./pages/BuildResume.jsx";
 
 // Public route wrapper
 const PublicRoute = ({ children }) => {
@@ -75,6 +75,14 @@ const appRouter = createBrowserRouter([
           <PublicRoute>
             <SignUp />
           </PublicRoute>
+        ),
+      },
+      {
+        path: "/build-resume",
+        element: (
+          <ProtectedRoute>
+            <BuildResume />
+          </ProtectedRoute>
         ),
       },
       // 🔓 Public marketing/info pages
