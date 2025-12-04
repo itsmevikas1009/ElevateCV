@@ -1,4 +1,3 @@
-// server/src/models/Resume.js
 import mongoose from "mongoose";
 
 const resumeSchema = new mongoose.Schema(

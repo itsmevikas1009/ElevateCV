@@ -9,7 +9,7 @@ import authRoutes from "./routes/authRoutes.js";
 import resumeRoutes from "./routes/resumeRoutes.js";
 
 dotenv.config();
-connectDB(); // Connect to MongoDB
+connectDB(); 
 
 const app = express();
 const PORT = process.env.PORT || 5000;

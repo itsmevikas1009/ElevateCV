@@ -29,7 +29,7 @@ export const registerUser = async (req, res) => {
     const token = jwt.sign(
       { id: user._id, email: user.email, role: user.role },
       JWT_SECRET,
-      { expiresIn: "7d" }
+      { expiresIn: "2m" }
     );
 
     res.status(201).json({
