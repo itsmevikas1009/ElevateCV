@@ -25,14 +25,11 @@ const __dirname = path.dirname(__filename);
 // app.use("/uploads", express.static(path.join(__dirname, "../uploads")));
 app.use("/uploads", express.static(path.join(process.cwd(), "uploads")));
 
-// API routes
 app.use("/api/auth", authRoutes);
 app.use("/api/resume", resumeRoutes);
 
-// Root route
 app.get("/", (req, res) =>
   res.send("🚀 ElevateCV server running successfully!")
 );
 
-// Start server
 app.listen(PORT, () => console.log(`✅ Server listening on port ${PORT}`));
