@@ -4,7 +4,6 @@ import User from "../models/User.js";
 
 const JWT_SECRET = process.env.JWT_SECRET || "your_secret_key";
 
-
 export const registerUser = async (req, res) => {
   try {
     const { name, email, password, company, role } = req.body;
@@ -29,14 +28,19 @@ export const registerUser = async (req, res) => {
     const token = jwt.sign(
       { id: user._id, email: user.email, role: user.role },
       JWT_SECRET,
-      { expiresIn: "7d" }
+      { expiresIn: "10m" }
     );
 
     res.status(201).json({
       success: true,
       message: "User registered successfully.",
       token,
-      user: { id: user._id, name: user.name, email: user.email, role: user.role },
+      user: {
+        id: user._id,
+        name: user.name,
+        email: user.email,
+        role: user.role,
+      },
     });
   } catch (err) {
     console.error("Register error:", err);
@@ -56,13 +60,18 @@ export const loginUser = async (req, res) => {
     if (!isMatch)
       return res.status(400).json({ message: "Invalid credentials." });
 
-    const token = jwt.sign({ id: user._id }, JWT_SECRET, { expiresIn: "7d" });
+    const token = jwt.sign({ id: user._id }, JWT_SECRET, { expiresIn: "10m" });
 
     res.status(200).json({
       success: true,
       message: "Login successful.",
       token,
-      user: { id: user._id, name: user.name, email: user.email, role: user.role },
+      user: {
+        id: user._id,
+        name: user.name,
+        email: user.email,
+        role: user.role,
+      },
     });
   } catch (err) {
     res.status(500).json({ message: err.message });
@@ -106,16 +115,13 @@ export const updateUser = async (req, res) => {
   }
 };
 
-
 // 🟢 Get user profile
 export const getUserProfile = async (req, res) => {
   try {
-    const user = await User.findById(req.user.id)
-      .select("-password")
-      .populate({
-        path: "resumes",
-        select: "jobTitle jobDescription createdAt feedback resumePath"
-      });
+    const user = await User.findById(req.user.id).select("-password").populate({
+      path: "resumes",
+      select: "jobTitle jobDescription createdAt feedback resumePath",
+    });
 
     res.status(200).json({ success: true, user });
   } catch (err) {

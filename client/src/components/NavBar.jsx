@@ -6,9 +6,11 @@ import { logout } from "../lib/api"; // or wherever your logout utility is
 // Single source of truth for menu
 const menuData = [
   { id: 1, title: "Home", path: "/" },
-  { id: 2, title: "Dashboard", path: "/dashboard" },
+  // { id: 2, title: "Dashboard", path: "/dashboard" },
+  { id: 2, title: "Resume-Upload", path: "/resume-upload" },
+  { id: 3, title: "Build-Resume", path: "/build-resume" },
   {
-    id: 3,
+    id: 4,
     title: "Resources",
     submenu: [
       { id: "blog", title: "Blog", path: "/blog" },
@@ -196,14 +198,14 @@ const NavBar = () => {
                   <Link
                     to="/dashboard"
                     onClick={handleNavItemClick}
-                    className="hidden sm:inline-flex text-blue-600 font-medium text-base hover:text-blue-700 transition"
+                    className="inline-flex items-center justify-center text-sm md:text-base font-semibold text-white bg-linear-to-r from-blue-500 via-indigo-500 to-pink-500 md:px-5 px-4 md:py-2.5 py-2 rounded-full shadow-[0_6px_20px_rgba(79,70,229,0.35)] hover:shadow-[0_8px_26px_rgba(79,70,229,0.45)] hover:brightness-110 transition-all"
                   >
                     Dashboard
                   </Link>
                   <button
                     onClick={handleLogout}
                     type="button"
-                    className="inline-flex items-center justify-center text-sm md:text-base font-semibold text-red-600 bg-red-50 md:px-5 px-4 md:py-2.5 py-2 rounded-full border border-red-100 hover:bg-red-100 hover:border-red-200 transition-all"
+                    className="inline-flex items-center justify-center text-sm md:text-base font-semibold text-red-600 bg-red-50 md:px-5 px-4 md:py-2.5 py-2 rounded-full border border-red-100 hover:bg-red-100 hover:border-red-200 transition-all cursor-pointer"
                   >
                     Log Out
                   </button>

@@ -1,5 +1,3 @@
-// server/src/utils/aiUtils.js
-
 export const AIResponseFormat = `
 interface Feedback {
   overallScore: number;            // 0-100 scale
