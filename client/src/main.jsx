@@ -22,6 +22,8 @@ import BlogPage from "./pages/BlogPage.jsx";
 import SupportPage from "./pages/SupportPage.jsx";
 import HowItWorksPage from "./pages/HowItWorksPage.jsx";
 import BuildResume from "./pages/BuildResume.jsx";
+import AdminPanel from "./pages/AdminPanel.jsx";
+import AdminLogin from "./pages/AdminLogin.jsx";
 
 // Public route wrapper
 const PublicRoute = ({ children }) => {
@@ -129,6 +131,24 @@ const appRouter = createBrowserRouter([
         element: (
           <ProtectedRoute>
             <EditProfile />
+          </ProtectedRoute>
+        ),
+      },
+
+      {
+        path: "/admin-login",
+        element: (
+          <PublicRoute>
+            <AdminLogin />
+          </PublicRoute>
+        ),
+      },
+
+      {
+        path: "/admin",
+        element: (
+          <ProtectedRoute>
+            <AdminPanel />
           </ProtectedRoute>
         ),
       },

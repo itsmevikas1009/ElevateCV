@@ -4,12 +4,14 @@ import cors from "cors";
 import path from "path";
 import { fileURLToPath } from "url";
 import connectDB from "./config/dbConnect.js";
+import { seedAdmin } from "./config/seedAdmin.js";
 
 import authRoutes from "./routes/authRoutes.js";
 import resumeRoutes from "./routes/resumeRoutes.js";
+import adminRoutes from "./routes/adminRoutes.js";
 
 dotenv.config();
-connectDB(); 
+connectDB().then(() => seedAdmin());
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -27,9 +29,10 @@ app.use("/uploads", express.static(path.join(process.cwd(), "uploads")));
 
 app.use("/api/auth", authRoutes);
 app.use("/api/resume", resumeRoutes);
+app.use("/api/admin", adminRoutes);
 
 app.get("/", (req, res) =>
-  res.send("🚀 ElevateCV server running successfully!")
+  res.send("🚀 ElevateCV server running successfully!"),
 );
 
 app.listen(PORT, () => console.log(`✅ Server listening on port ${PORT}`));

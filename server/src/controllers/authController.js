@@ -88,17 +88,23 @@ export const logoutUser = (req, res) => {
 export const updateUser = async (req, res) => {
   try {
     const userId = req.user.id; // from middleware
-    const { name, company, contactNumber, profileImage, role } = req.body;
+    const {
+      name, company, contactNumber, profileImage, role,
+      bio, location, website, linkedin, github, skills,
+      university, degree, graduationYear, experience, jobTitle,
+    } = req.body;
 
     const updateData = {};
 
-    if (typeof name !== "undefined") updateData.name = name;
-    if (typeof company !== "undefined") updateData.company = company;
-    if (typeof contactNumber !== "undefined")
-      updateData.contactNumber = contactNumber;
-    if (typeof profileImage !== "undefined")
-      updateData.profileImage = profileImage;
-    if (typeof role !== "undefined") updateData.role = role; // allow role change
+    const fields = {
+      name, company, contactNumber, profileImage, role,
+      bio, location, website, linkedin, github, skills,
+      university, degree, graduationYear, experience, jobTitle,
+    };
+
+    for (const [key, val] of Object.entries(fields)) {
+      if (typeof val !== "undefined") updateData[key] = val;
+    }
 
     const updatedUser = await User.findByIdAndUpdate(userId, updateData, {
       new: true,

@@ -1,128 +1,130 @@
 import React from "react";
+import { Link } from "react-router-dom";
 
 const HowItWorksPage = () => {
   const steps = [
     {
-      title: "Upload your resume",
-      desc: "Drag and drop your PDF or image, and ElevateCV reads it instantly with smart parsing.",
+      title: "Upload or Build",
+      desc: "Drag and drop your existing resume, or craft a new one from scratch using our premium builder. We parse the data instantly.",
       badge: "Step 1",
       badgeColor: "from-blue-500 to-sky-400",
+      icon: "📄"
     },
     {
-      title: "AI + ATS analysis",
-      desc: "We evaluate formatting, keywords, and structure just like modern ATS tools and recruiters.",
+      title: "Multi-Model AI Engine",
+      desc: "Our dual-API pipeline analyzes formatting, role-specific keywords, and structure. If the primary AI is busy, our fallback engine seamlessly takes over.",
       badge: "Step 2",
       badgeColor: "from-indigo-500 to-violet-500",
+      icon: "🧠"
     },
     {
-      title: "Get an actionable report",
-      desc: "Receive a clear score, insights, and bullet-point suggestions you can apply in minutes.",
+      title: "Actionable Feedback & PDF",
+      desc: "Receive a categorized score and precise improvement bullets. Once perfected, export your resume as a high-fidelity, ATS-compliant PDF.",
       badge: "Step 3",
       badgeColor: "from-pink-500 to-rose-400",
+      icon: "🎯"
     },
   ];
 
   return (
-    <div className="min-h-screen pt-28 pb-20 px-4 bg-linear-to-br from-[#f5f3ff] via-[#e0f2fe] to-[#fef9c3]">
-      <div className="max-w-6xl mx-auto relative">
-        {/* Soft background blobs */}
-        <div className="pointer-events-none absolute -top-16 -left-10 h-40 w-40 rounded-full bg-[#e9d5ff] opacity-60 blur-3xl" />
-        <div className="pointer-events-none absolute -bottom-10 right-0 h-40 w-40 rounded-full bg-[#bae6fd] opacity-60 blur-3xl" />
+    <div className="min-h-screen pt-40 pb-20 px-4 bg-slate-950 relative overflow-hidden">
+      {/* Dark background glows */}
+      <div className="pointer-events-none absolute -top-16 -left-10 h-96 w-96 rounded-full bg-blue-600/20 blur-[120px]" />
+      <div className="pointer-events-none absolute bottom-1/4 right-0 h-96 w-96 rounded-full bg-purple-600/20 blur-[120px]" />
 
+      <div className="max-w-6xl mx-auto relative z-10">
         {/* Hero Section */}
-        <header className="relative text-center mt-50 md:text-left mb-12 md:mb-16 flex flex-col md:flex-row md:items-center md:justify-between gap-8">
-          <div className="max-w-xl mx-auto md:mx-0">
-            <span className="inline-flex items-center gap-2 rounded-full bg-white/70 border border-slate-200 px-3 py-1 text-[11px] font-semibold uppercase tracking-wide text-slate-600 mb-3">
-              <span className="inline-flex h-2 w-2 rounded-full bg-emerald-400 animate-pulse" />
+        <header className="relative text-center md:text-left mb-20 flex flex-col md:flex-row md:items-center md:justify-between gap-12">
+          <div className="max-w-2xl mx-auto md:mx-0">
+            <span className="inline-flex items-center gap-2 rounded-full bg-slate-900 border border-slate-800 px-4 py-1.5 text-xs font-bold uppercase tracking-widest text-indigo-400 mb-6 shadow-sm">
+              <span className="inline-flex h-2 w-2 rounded-full bg-emerald-500 animate-pulse" />
               Guided in 3 simple steps
             </span>
-            <h1 className="text-3xl md:text-4xl font-extrabold text-slate-900 leading-snug">
+            <h1 className="text-4xl md:text-5xl lg:text-6xl font-extrabold text-white leading-tight mb-6">
               How{" "}
-              <span className="bg-linear-to-r from-blue-600 via-indigo-600 to-pink-500 bg-clip-text text-transparent">
+              <span className="bg-linear-to-r from-blue-400 via-indigo-400 to-pink-400 bg-clip-text text-transparent">
                 ElevateCV
               </span>{" "}
-              works for you
+              transforms your career
             </h1>
-            <p className="mt-3 text-slate-600 text-sm md:text-base">
-              From upload to insight in under a minute. Here’s what happens
-              behind the scenes every time you submit your resume to ElevateCV.
+            <p className="text-slate-400 text-base md:text-lg leading-relaxed">
+              From upload to insight in under a minute. Here’s what happens behind the scenes every time you submit your resume to our resilient intelligence engine.
             </p>
           </div>
 
           {/* Right side mini card */}
-          <div className="max-w-sm mx-auto md:mx-0">
-            <div className="relative rounded-3xl bg-white/80 border border-slate-100 shadow-[0_16px_40px_rgba(148,163,184,0.35)] p-5">
-              <h2 className="text-sm font-semibold text-slate-900 mb-2">
+          <div className="w-full max-w-sm mx-auto md:mx-0 flex-shrink-0">
+            <div className="relative rounded-3xl bg-slate-900/60 backdrop-blur-xl border border-slate-800 shadow-[0_20px_50px_rgba(0,0,0,0.5)] p-8">
+              <h2 className="text-lg font-bold text-white mb-3">
                 Why it’s different
               </h2>
-              <p className="text-xs text-slate-600 mb-4">
+              <p className="text-sm text-slate-400 mb-6 leading-relaxed">
                 ElevateCV doesn’t just score your resume — it explains{" "}
-                <span className="font-semibold text-slate-800">
-                  exactly what to fix and why.
-                </span>
+                <strong className="text-slate-200">exactly what to fix and why</strong>, using dynamic keyword banks.
               </p>
-              <div className="grid grid-cols-3 gap-3 text-center">
-                <div className="rounded-2xl bg-blue-50 py-3">
-                  <p className="text-xs font-semibold text-blue-700">60s</p>
-                  <p className="text-[10px] text-blue-500">
-                    Avg. analysis time
-                  </p>
+              <div className="grid grid-cols-3 gap-4 text-center">
+                <div className="rounded-2xl bg-slate-800/50 border border-slate-700/50 py-4">
+                  <p className="text-sm font-bold text-blue-400 mb-1">60s</p>
+                  <p className="text-[10px] text-slate-500 uppercase tracking-wide">Analysis</p>
                 </div>
-                <div className="rounded-2xl bg-indigo-50 py-3">
-                  <p className="text-xs font-semibold text-indigo-700">ATS</p>
-                  <p className="text-[10px] text-indigo-500">Style checks</p>
+                <div className="rounded-2xl bg-slate-800/50 border border-slate-700/50 py-4">
+                  <p className="text-sm font-bold text-indigo-400 mb-1">ATS</p>
+                  <p className="text-[10px] text-slate-500 uppercase tracking-wide">Checks</p>
                 </div>
-                <div className="rounded-2xl bg-pink-50 py-3">
-                  <p className="text-xs font-semibold text-pink-700">Tips</p>
-                  <p className="text-[10px] text-pink-500">
-                    Actionable bullets
-                  </p>
+                <div className="rounded-2xl bg-slate-800/50 border border-slate-700/50 py-4">
+                  <p className="text-sm font-bold text-pink-400 mb-1">PDF</p>
+                  <p className="text-[10px] text-slate-500 uppercase tracking-wide">Export</p>
                 </div>
               </div>
-              <div className="mt-4 h-0.5 w-full rounded-full bg-linear-to-r from-blue-500 via-indigo-500 to-pink-500" />
             </div>
           </div>
         </header>
 
         {/* Steps Section */}
         <section className="relative">
-          <div className="grid gap-6 md:grid-cols-3">
+          <div className="grid gap-8 lg:grid-cols-3">
             {steps.map((step, index) => (
               <div
                 key={step.title}
-                className="relative rounded-2xl bg-white/90 border border-slate-100 shadow-[0_12px_30px_rgba(148,163,184,0.25)] p-6 flex flex-col group hover:-translate-y-1.5 hover:shadow-[0_18px_40px_rgba(148,163,184,0.3)] transition-transform duration-200"
+                className="relative rounded-3xl bg-slate-900/40 backdrop-blur-md border border-slate-800 p-8 flex flex-col group hover:-translate-y-2 hover:bg-slate-800/60 hover:shadow-[0_20px_40px_rgba(0,0,0,0.4)] hover:border-slate-700 transition-all duration-300"
               >
-                {/* Step badge with gradient */}
-                <span
-                  className={`inline-flex w-max items-center rounded-full bg-linear-to-r ${step.badgeColor} px-3 py-1 text-[11px] font-semibold text-white mb-4 shadow-sm`}
-                >
-                  {step.badge}
-                </span>
-
-                <h2 className="text-lg font-semibold text-slate-900 mb-2">
-                  {step.title}
-                </h2>
-                <p className="text-sm text-slate-600 flex-1">{step.desc}</p>
-
-                {/* Progress bar */}
-                <div className="mt-4 h-1 w-full rounded-full bg-slate-100 overflow-hidden">
-                  <div className="h-full w-full bg-linear-to-r from-blue-500 via-indigo-500 to-pink-500 origin-left scale-x-75 group-hover:scale-x-100 transition-transform duration-300" />
-                </div>
-
                 {/* Step number bubble */}
-                <span className="absolute -top-4 right-5 inline-flex h-8 w-8 items-center justify-center rounded-full bg-white shadow-md border border-slate-100 text-xs font-semibold text-slate-700">
+                <span className="absolute -top-5 right-8 inline-flex h-10 w-10 items-center justify-center rounded-full bg-slate-800 shadow-[0_0_15px_rgba(0,0,0,0.3)] border border-slate-700 text-sm font-bold text-slate-300">
                   {index + 1}
                 </span>
+
+                {/* Step badge with gradient */}
+                <div className="flex items-center gap-3 mb-6">
+                  <span className="text-2xl">{step.icon}</span>
+                  <span
+                    className={`inline-flex items-center rounded-full bg-linear-to-r ${step.badgeColor} px-3 py-1 text-[10px] font-bold uppercase tracking-widest text-white shadow-sm`}
+                  >
+                    {step.badge}
+                  </span>
+                </div>
+
+                <h2 className="text-xl font-bold text-white mb-3 group-hover:text-indigo-300 transition-colors">
+                  {step.title}
+                </h2>
+                <p className="text-sm text-slate-400 flex-1 leading-relaxed">{step.desc}</p>
+
+                {/* Progress bar */}
+                <div className="mt-6 h-1 w-full rounded-full bg-slate-800 overflow-hidden">
+                  <div className={`h-full w-full bg-linear-to-r ${step.badgeColor} origin-left scale-x-0 group-hover:scale-x-100 transition-transform duration-500`} />
+                </div>
               </div>
             ))}
           </div>
 
-          {/* Little footnote text */}
-          <p className="mt-8 text-center text-xs md:text-sm text-slate-500 max-w-2xl mx-auto">
-            We don’t store your resume content permanently. Each analysis is
-            processed securely so that you can confidently refine your CV as
-            many times as you like.
-          </p>
+          {/* CTA / Footnote */}
+          <div className="mt-20 text-center">
+            <Link to="/resume-upload" className="inline-flex items-center justify-center text-base font-bold text-white bg-white/10 hover:bg-white/20 backdrop-blur-md border border-white/10 px-8 py-4 rounded-full transition-all hover:scale-105 hover:shadow-[0_0_30px_rgba(255,255,255,0.1)] mb-6">
+              Start Analyzing Now &rarr;
+            </Link>
+            <p className="text-xs md:text-sm text-slate-500 max-w-2xl mx-auto">
+              We process your documents securely and generate actionable intelligence so you can confidently refine your CV as many times as you like.
+            </p>
+          </div>
         </section>
       </div>
     </div>

@@ -1,7 +1,8 @@
 // src/components/ResumeReview.jsx
 import React, { useMemo } from "react";
-import { downloadReportPdf } from "../lib/api";
+import { downloadReportFrontend } from "../engines/reportExport.js";
 import toast from "react-hot-toast";
+import { normalizeResumeFeedback } from "../lib/resumeFeedback.js";
 import {
   BarChart,
   Bar,
@@ -38,7 +39,12 @@ const getScoreStatus = (score) => {
 };
 
 const ResumeReview = ({ feedback, resumeDoc }) => {
-  if (!feedback)
+  const normalizedFeedback = useMemo(
+    () => normalizeResumeFeedback(feedback),
+    [feedback]
+  );
+
+  if (!normalizedFeedback)
     return (
       <div className="w-full py-12 text-center text-gray-500 font-medium">
         No feedback available.
@@ -46,7 +52,7 @@ const ResumeReview = ({ feedback, resumeDoc }) => {
     );
 
   const chartData = useMemo(() => {
-    const sections = feedback.sections || {};
+    const sections = normalizedFeedback.sections || {};
     return sectionOrder
       .map((key) => {
         const sec = sections[key];
@@ -57,18 +63,18 @@ const ResumeReview = ({ feedback, resumeDoc }) => {
         };
       })
       .filter(Boolean);
-  }, [feedback]);
+  }, [normalizedFeedback]);
 
-  const handleDownloadPdf = async () => {
-    if (!resumeDoc?._id) {
+  const handleDownloadPdf = () => {
+    if (!resumeDoc?._id || !normalizedFeedback) {
       toast.error("Resume information not available for report download.");
       return;
     }
     try {
-      await downloadReportPdf(resumeDoc._id);
-      toast.success("Report PDF download started.");
+      downloadReportFrontend(resumeDoc, normalizedFeedback);
+      toast.success("Report PDF opened — use Ctrl+P to save!");
     } catch (err) {
-      toast.error(err.message || "Failed to download report.");
+      toast.error("Failed to generate report.");
     }
   };
 
@@ -128,6 +134,13 @@ const ResumeReview = ({ feedback, resumeDoc }) => {
       <div className="flex-2 rounded-xl bg-white/70 shadow-lg px-8 py-6">
         <h2 className="text-2xl font-bold mb-4">Resume Review</h2>
 
+        {normalizedFeedback.meta?.extractionWarning ? (
+          <div className="mb-4 rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-800">
+            {normalizedFeedback.meta.extractionWarning} A general analysis was
+            generated from the available resume data.
+          </div>
+        ) : null}
+
         {/* Overall score + chart */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6">
           {/* Overall score box */}
@@ -136,7 +149,7 @@ const ResumeReview = ({ feedback, resumeDoc }) => {
               Overall Resume Score
             </div>
             <div className="text-4xl font-extrabold text-blue-700">
-              {feedback.overallScore ?? "--"}/100
+              {normalizedFeedback.overallScore ?? "--"}/100
             </div>
             <p className="text-xs text-gray-500 mt-2">
               Higher scores indicate stronger alignment with ATS criteria,
@@ -199,7 +212,7 @@ const ResumeReview = ({ feedback, resumeDoc }) => {
         {/* Section-wise details list */}
         <div className="space-y-4">
           {sectionOrder.map((sectionKey) => {
-            const section = feedback.sections?.[sectionKey];
+            const section = normalizedFeedback.sections?.[sectionKey];
             if (!section) return null;
             const status = getScoreStatus(section.score);
             return (

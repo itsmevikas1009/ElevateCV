@@ -3,6 +3,7 @@ import { useParams } from "react-router-dom";
 import ResumeReview from "../components/ResumeReview.jsx";
 import Loader from "../components/Loader.jsx";
 import { getResumeById } from "../lib/api";
+import { normalizeResumeFeedback } from "../lib/resumeFeedback.js";
 
 const ResumeReviewPage = () => {
   const { id } = useParams();
@@ -17,7 +18,7 @@ const ResumeReviewPage = () => {
     getResumeById(id)
       .then((data) => {
         if (data.success && data.resume) {
-          setFeedback(data.resume.feedback);
+          setFeedback(normalizeResumeFeedback(data.resume.feedback));
           setResumeDoc(data.resume);
         } else {
           setError(data.message || "Failed to load feedback");

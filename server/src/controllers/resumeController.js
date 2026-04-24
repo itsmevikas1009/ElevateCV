@@ -10,7 +10,11 @@ import Tesseract from "tesseract.js";
 import PDFDocument from "pdfkit";
 
 import Resume from "../models/Resume.js";
-import { analyzeWithAI } from "../services/aiService.js";
+import {
+  analyzeWithAI,
+  generateFallbackReport,
+  normalizeAIResponse,
+} from "../services/aiService.js";
 
 // 🔹 Helper function: extract text based on file type
 async function extractTextFromFile(filePath, mimeType) {
@@ -40,6 +44,16 @@ async function extractTextFromFile(filePath, mimeType) {
       return ocrResult.data.text.trim();
     }
 
+    // Handle plain text files (from builder export)
+    if (
+      ext === ".txt" ||
+      mimeType === "text/plain" ||
+      mimeType === "application/octet-stream"
+    ) {
+      const content = await fs.readFile(filePath, "utf-8");
+      return content.trim();
+    }
+
     throw new Error("Unsupported file format");
   } catch (err) {
     console.error("❌ Error extracting text:", err);
@@ -54,28 +68,55 @@ export const uploadResume = async (req, res) => {
   }
 
   const filePath = req.file.path;
-  const mimeType = req.file.mimetype;
+  const mimeType = req.file.mimetype || "";
 
   try {
-    // Extract text
-    const resumeText = await extractTextFromFile(filePath, mimeType);
-    if (!resumeText) throw new Error("Could not extract text from file.");
-
     const jobTitle = req.body.jobTitle || "Not specified";
     const jobDescription = req.body.jobDescription || "Not specified";
     const companyName = req.body.companyName || "Not specified";
     const userId = req.user?._id; // from middleware
+    const fallbackSeedText = [jobTitle, jobDescription, companyName]
+      .filter(Boolean)
+      .join("\n");
+
+    let resumeText = "";
+    let extractionWarning = "";
+
+    try {
+      resumeText = await extractTextFromFile(filePath, mimeType);
+    } catch (extractErr) {
+      extractionWarning = extractErr.message || "Text extraction failed.";
+      console.warn("Resume text extraction failed, using generic fallback:", {
+        file: req.file.originalname,
+        mimeType,
+        error: extractionWarning,
+      });
+    }
+
+    if (!resumeText?.trim()) {
+      resumeText = fallbackSeedText;
+      if (!extractionWarning) {
+        extractionWarning =
+          "No readable text was extracted from the uploaded file.";
+      }
+    }
 
     // Analyze with AI
-    const aiFeedback = await analyzeWithAI(
-      resumeText,
-      jobTitle,
-      jobDescription
+    const aiFeedback = resumeText
+      ? await analyzeWithAI(resumeText, jobTitle, jobDescription)
+      : generateFallbackReport(fallbackSeedText, jobTitle);
+    const safeFeedback = normalizeAIResponse(
+      aiFeedback,
+      resumeText || fallbackSeedText,
+      jobTitle
     );
-    const safeFeedback =
-      typeof aiFeedback === "object" && aiFeedback !== null
-        ? aiFeedback
-        : { raw: aiFeedback };
+
+    if (extractionWarning) {
+      safeFeedback.meta = {
+        ...(safeFeedback.meta || {}),
+        extractionWarning,
+      };
+    }
 
     // Save to DB
     const resumeDoc = await Resume.create({
@@ -99,6 +140,7 @@ export const uploadResume = async (req, res) => {
     res.status(201).json({
       success: true,
       resumeId: resumeDoc._id,
+      resume: resumeDoc.toObject(),
       jobTitle: resumeDoc.jobTitle,
       jobDescription: resumeDoc.jobDescription,
       feedback: safeFeedback,
@@ -130,6 +172,12 @@ export const getResumeById = async (req, res) => {
         .json({ message: "You do not have permission to view this resume." });
     }
 
+    resumeDoc.feedback = normalizeAIResponse(
+      resumeDoc.feedback,
+      "",
+      resumeDoc.jobTitle || ""
+    );
+
     res.status(200).json({ success: true, resume: resumeDoc });
   } catch (err) {
     res.status(500).json({ message: err.message });
@@ -144,8 +192,8 @@ export const deleteResumeById = async (req, res) => {
       return res.status(404).json({ message: "Resume not found" });
     }
 
-    // Ownership check
-    if (String(resumeDoc.user) !== String(req.user._id)) {
+    // Ownership check or Admin
+    if (String(resumeDoc.user) !== String(req.user._id) && req.user.role !== "admin") {
       return res
         .status(403)
         .json({ message: "You do not have permission to delete this resume." });
@@ -167,7 +215,7 @@ export const deleteResumeById = async (req, res) => {
 
     // Remove reference from user's resumes array
     const User = (await import("../models/User.js")).default;
-    await User.findByIdAndUpdate(req.user._id, {
+    await User.findByIdAndUpdate(resumeDoc.user, {
       $pull: { resumes: resumeDoc._id },
     });
 
@@ -304,21 +352,11 @@ export const downloadResumeReportPdf = async (req, res) => {
     }
 
     // 🧠 Normalize feedback structure
-    let feedback = resumeDoc.feedback || {};
-
-    // Sometimes AI or previous versions might store nested feedback like { feedback: { ... } }
-    if (feedback.feedback && typeof feedback.feedback === "object") {
-      feedback = feedback.feedback;
-    }
-
-    // If feedback is a string JSON, try parsing
-    if (typeof feedback === "string") {
-      try {
-        feedback = JSON.parse(feedback);
-      } catch (e) {
-        // keep as raw string
-      }
-    }
+    const feedback = normalizeAIResponse(
+      resumeDoc.feedback,
+      "",
+      resumeDoc.jobTitle || ""
+    );
 
     res.setHeader("Content-Type", "application/pdf");
     res.setHeader(
@@ -355,10 +393,7 @@ export const downloadResumeReportPdf = async (req, res) => {
 
     // Section-wise details
     // feedback.sections is the normal format used in your UI
-    const sections =
-      (feedback.sections && typeof feedback.sections === "object"
-        ? feedback.sections
-        : feedback) || {};
+    const sections = feedback.sections || {};
 
     if (sections && typeof sections === "object") {
       Object.entries(sections).forEach(([sectionKey, sectionVal]) => {

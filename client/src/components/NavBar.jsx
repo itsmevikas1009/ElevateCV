@@ -179,18 +179,26 @@ const NavBar = () => {
               {!isLoggedIn ? (
                 <>
                   <Link
+                    to="/admin-login"
+                    onClick={handleNavItemClick}
+                    className="hidden md:inline-flex px-3 py-2 rounded-full bg-slate-100 text-slate-600 font-medium text-sm hover:bg-slate-200 hover:text-slate-900 transition-all items-center gap-1.5"
+                  >
+                    <span>🛡️</span> Admin
+                  </Link>
+                  <Link
                     to="/signin"
                     onClick={handleNavItemClick}
-                    className="hidden sm:inline-flex text-blue-600 font-medium text-base hover:text-blue-700 transition"
+                    className="hidden sm:inline-flex text-slate-700 font-bold text-sm md:text-base px-5 py-2.5 rounded-full hover:bg-slate-100 hover:text-blue-600 transition-all"
                   >
                     Sign In
                   </Link>
                   <Link
                     to="/signup"
                     onClick={handleNavItemClick}
-                    className="inline-flex items-center justify-center text-sm md:text-base font-semibold text-white bg-linear-to-r from-blue-500 via-indigo-500 to-pink-500 md:px-8 px-5 md:py-2.5 py-2 rounded-full shadow-[0_10px_30px_rgba(79,70,229,0.45)] hover:shadow-[0_12px_36px_rgba(79,70,229,0.55)] hover:brightness-110 transition-all"
+                    className="relative group inline-flex items-center justify-center text-sm md:text-base font-bold text-white bg-slate-900 md:px-8 px-6 md:py-3 py-2.5 rounded-full shadow-[0_8px_20px_rgba(0,0,0,0.15)] hover:shadow-[0_12px_25px_rgba(0,0,0,0.25)] transition-all overflow-hidden"
                   >
-                    Get Started
+                    <span className="absolute inset-0 w-full h-full bg-linear-to-r from-blue-600 via-indigo-500 to-purple-600 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></span>
+                    <span className="relative z-10 flex items-center gap-2">Get Started <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" className="transform group-hover:translate-x-1 transition-transform"><path d="M5 12h14M12 5l7 7-7 7"/></svg></span>
                   </Link>
                 </>
               ) : (
@@ -198,14 +206,15 @@ const NavBar = () => {
                   <Link
                     to="/dashboard"
                     onClick={handleNavItemClick}
-                    className="inline-flex items-center justify-center text-sm md:text-base font-semibold text-white bg-linear-to-r from-blue-500 via-indigo-500 to-pink-500 md:px-5 px-4 md:py-2.5 py-2 rounded-full shadow-[0_6px_20px_rgba(79,70,229,0.35)] hover:shadow-[0_8px_26px_rgba(79,70,229,0.45)] hover:brightness-110 transition-all"
+                    className="relative group inline-flex items-center justify-center text-sm md:text-base font-bold text-white bg-slate-900 md:px-6 px-5 md:py-2.5 py-2 rounded-full shadow-[0_8px_20px_rgba(0,0,0,0.15)] hover:shadow-[0_12px_25px_rgba(0,0,0,0.25)] transition-all overflow-hidden"
                   >
-                    Dashboard
+                    <span className="absolute inset-0 w-full h-full bg-linear-to-r from-blue-600 via-indigo-500 to-purple-600 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></span>
+                    <span className="relative z-10">Dashboard</span>
                   </Link>
                   <button
                     onClick={handleLogout}
                     type="button"
-                    className="inline-flex items-center justify-center text-sm md:text-base font-semibold text-red-600 bg-red-50 md:px-5 px-4 md:py-2.5 py-2 rounded-full border border-red-100 hover:bg-red-100 hover:border-red-200 transition-all cursor-pointer"
+                    className="inline-flex items-center justify-center text-sm md:text-base font-bold text-slate-600 bg-slate-100 md:px-5 px-4 md:py-2.5 py-2 rounded-full hover:bg-red-50 hover:text-red-600 transition-all cursor-pointer shadow-sm"
                   >
                     Log Out
                   </button>

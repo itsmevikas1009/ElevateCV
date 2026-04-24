@@ -1,69 +1,83 @@
 import React from "react";
+import { Link } from "react-router-dom";
 
 const BlogPage = () => {
-  const posts = ["ATS Optimization", "Portfolio & Projects", "Interview Prep"];
+  const posts = [
+    {
+      title: "How to Beat Modern ATS",
+      desc: "Discover the keyword algorithms recruiters use, and how ElevateCV’s scoring weights map exactly to what hiring managers want.",
+      read: "5 min read",
+      type: "Strategy"
+    },
+    {
+      title: "The Power of Fallback AI",
+      desc: "Learn how our resilient, multi-model backend ensures your resume is always analyzed perfectly, even during API outages.",
+      read: "4 min read",
+      type: "Tech Inside"
+    },
+    {
+      title: "Building High-Fidelity PDFs",
+      desc: "Why design consistency matters. See how our new robust PDF generation preserves formatting and makes a premium first impression.",
+      read: "6 min read",
+      type: "Design"
+    }
+  ];
 
   return (
-    <div className="min-h-screen pt-40 md:pt-48 pb-20 px-4 bg-linear-to-br from-[#f5f3ff] via-[#e0f2fe] to-[#fdf2ff] relative overflow-hidden">
-      {/* Soft background blobs */}
-      <div className="pointer-events-none absolute -top-24 -left-10 h-48 w-48 rounded-full bg-[#e9d5ff] opacity-60 blur-3xl" />
-      <div className="pointer-events-none absolute -bottom-20 right-0 h-48 w-48 rounded-full bg-[#bae6fd] opacity-60 blur-3xl" />
+    <div className="min-h-screen pt-40 md:pt-48 pb-20 px-4 bg-slate-950 relative overflow-hidden">
+      {/* Dark background glows */}
+      <div className="pointer-events-none absolute -top-24 -left-10 h-96 w-96 rounded-full bg-indigo-600/20 blur-[120px]" />
+      <div className="pointer-events-none absolute -bottom-20 right-0 h-96 w-96 rounded-full bg-pink-600/20 blur-[120px]" />
 
-      <div className="max-w-6xl mx-auto relative">
+      <div className="max-w-6xl mx-auto relative z-10">
         {/* Header */}
-        <header className="text-center mb-12">
-          <span className="inline-flex items-center px-3 py-1 rounded-full bg-white/80 border border-slate-200 text-xs font-semibold text-slate-600 mb-4 shadow-sm">
-            ElevateCV Blog
+        <header className="text-center mb-16">
+          <span className="inline-flex items-center px-4 py-1.5 rounded-full bg-slate-900 border border-slate-800 text-xs font-bold text-slate-300 mb-6 shadow-sm">
+            <span className="w-2 h-2 rounded-full bg-blue-500 mr-2 animate-pulse"></span> ElevateCV Intelligence Blog
           </span>
-          <h1 className="text-3xl md:text-4xl font-extrabold bg-linear-to-r from-blue-600 via-indigo-600 to-pink-500 bg-clip-text text-transparent">
-            Tips to Elevate Your Resume
+          <h1 className="text-4xl md:text-5xl font-extrabold bg-linear-to-r from-blue-400 via-indigo-400 to-pink-400 bg-clip-text text-transparent mb-4">
+            Master Your Career Narrative
           </h1>
-          <p className="mt-3 text-slate-600 max-w-2xl mx-auto text-sm md:text-base">
-            Read practical guides, checklists, and case studies on building
-            resumes that actually pass ATS and impress hiring managers.
+          <p className="mt-4 text-slate-400 max-w-2xl mx-auto text-base md:text-lg">
+            Deep-dive into AI resume optimization, ATS bypass strategies, and the cutting-edge technology powering ElevateCV.
           </p>
         </header>
 
         {/* Featured card */}
-        <section className="mb-10">
-          <div className="rounded-3xl bg-white/90 border border-slate-100 shadow-[0_18px_45px_rgba(148,163,184,0.35)] p-6 md:p-8 flex flex-col md:flex-row md:items-center gap-6">
+        <section className="mb-16">
+          <div className="rounded-3xl bg-slate-900/60 backdrop-blur-xl border border-slate-800 p-8 md:p-10 flex flex-col md:flex-row md:items-center gap-10 hover:border-slate-700 transition-colors group">
             <div className="flex-1 text-left">
-              <p className="text-xs font-semibold uppercase tracking-wide text-blue-500 mb-2">
-                Featured • Resume Strategy
+              <p className="text-xs font-bold uppercase tracking-widest text-indigo-400 mb-3 flex items-center gap-2">
+                <span className="text-pink-500">🔥</span> Featured Release
               </p>
-              <h2 className="text-xl md:text-2xl font-bold text-slate-900 mb-2">
-                7 small tweaks that instantly make your CV more ATS-friendly
+              <h2 className="text-2xl md:text-3xl font-bold text-white mb-4 group-hover:text-blue-400 transition-colors">
+                Introducing ElevateCV v2.0: Multi-Model AI & Dynamic Engine
               </h2>
-              <p className="text-sm text-slate-600 mb-4 max-w-xl">
-                Learn how spacing, section order, and keyword placement can
-                dramatically improve your chances of getting past automated
-                filters without rewriting your entire resume.
+              <p className="text-base text-slate-400 mb-6 max-w-xl leading-relaxed">
+                We've completely overhauled our analysis pipeline. Discover how the new dual-API architecture seamlessly falls back between models, ensuring your feedback is always accurate, structured, and instantly actionable.
               </p>
-              <button className="inline-flex items-center text-sm font-semibold text-blue-600 hover:text-indigo-600">
-                Read featured article →
-              </button>
+              <Link to="/resume-upload" className="inline-flex items-center text-sm font-bold text-white bg-indigo-600 hover:bg-indigo-500 px-6 py-3 rounded-full transition-all shadow-[0_0_15px_rgba(79,70,229,0.3)]">
+                Try the New Engine &rarr;
+              </Link>
             </div>
-            <div className="w-full md:w-64">
-              <div className="rounded-2xl bg-linear-to-br from-blue-500 via-indigo-500 to-pink-500 p-px">
-                <div className="h-full rounded-2xl bg-white/95 px-4 py-4 text-xs text-slate-700 flex flex-col gap-3">
-                  <div className="flex justify-between">
-                    <span>Avg. ATS score</span>
-                    <span className="font-semibold text-blue-600">72%</span>
+            <div className="w-full md:w-80">
+              <div className="rounded-2xl bg-linear-to-br from-blue-500 via-indigo-500 to-pink-500 p-px shadow-[0_0_30px_rgba(79,70,229,0.2)]">
+                <div className="h-full rounded-2xl bg-slate-950 px-6 py-6 text-sm text-slate-300 flex flex-col gap-4">
+                  <div className="flex justify-between items-center border-b border-slate-800 pb-2">
+                    <span className="text-slate-400">Resilience</span>
+                    <span className="font-bold text-blue-400">100% Uptime</span>
                   </div>
-                  <div className="flex justify-between">
-                    <span>Improvement ideas</span>
-                    <span className="font-semibold text-indigo-600">10+</span>
+                  <div className="flex justify-between items-center border-b border-slate-800 pb-2">
+                    <span className="text-slate-400">Analysis Vectors</span>
+                    <span className="font-bold text-indigo-400">6 Dimensions</span>
                   </div>
-                  <div className="flex justify-between">
-                    <span>Read time</span>
-                    <span className="font-semibold text-pink-600">5 min</span>
+                  <div className="flex justify-between items-center pb-2">
+                    <span className="text-slate-400">Role Specificity</span>
+                    <span className="font-bold text-pink-400">Dynamic Banks</span>
                   </div>
-                  <div className="mt-3 h-1 rounded-full bg-slate-100 overflow-hidden">
-                    <div className="h-full w-3/4 bg-linear-to-r from-blue-500 via-indigo-500 to-pink-500" />
+                  <div className="mt-2 h-1.5 rounded-full bg-slate-800 overflow-hidden">
+                    <div className="h-full w-full bg-linear-to-r from-blue-500 via-indigo-500 to-pink-500" />
                   </div>
-                  <p className="mt-1 text-[10px] text-slate-500">
-                    Updated weekly based on real recruiter feedback.
-                  </p>
                 </div>
               </div>
             </div>
@@ -73,35 +87,31 @@ const BlogPage = () => {
         {/* Article cards */}
         <section>
           <div className="grid gap-6 md:grid-cols-3">
-            {posts.map((title, idx) => (
+            {posts.map((post, idx) => (
               <article
-                key={title}
-                className="group rounded-2xl bg-white/90 border border-slate-100 shadow-[0_12px_30px_rgba(148,163,184,0.25)] p-5 flex flex-col hover:-translate-y-1.5 hover:shadow-[0_16px_40px_rgba(148,163,184,0.3)] transition-transform duration-200"
+                key={post.title}
+                className="group relative rounded-2xl bg-slate-900/40 backdrop-blur-md border border-slate-800 p-6 flex flex-col hover:-translate-y-2 hover:bg-slate-800/60 hover:shadow-[0_20px_40px_rgba(0,0,0,0.4)] hover:border-slate-700 transition-all duration-300 overflow-hidden"
               >
-                <p className="text-xs uppercase tracking-wide text-blue-500 mb-2 flex items-center gap-1">
-                  <span className="inline-flex h-4 w-4 items-center justify-center rounded-full border border-blue-200 text-[10px] text-blue-600 bg-blue-50">
+                <div className="absolute top-0 left-0 w-full h-1 bg-linear-to-r from-blue-600 to-indigo-600 opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                
+                <p className="text-xs uppercase tracking-widest text-indigo-400 mb-4 flex items-center gap-2">
+                  <span className="inline-flex h-6 w-6 items-center justify-center rounded-full border border-indigo-500/30 text-[10px] text-indigo-300 bg-indigo-500/10">
                     {idx + 1}
                   </span>
-                  Guide #{idx + 1}
+                  {post.type}
                 </p>
-                <h2 className="text-lg font-semibold text-slate-900 mb-2">
-                  {title}
+                <h2 className="text-xl font-bold text-slate-100 mb-3 group-hover:text-indigo-300 transition-colors">
+                  {post.title}
                 </h2>
-                <p className="text-sm text-slate-600 mb-4 flex-1">
-                  Learn how to fine-tune your CV with real recruiter-backed
-                  strategies and AI-powered suggestions tailored to modern job
-                  descriptions.
+                <p className="text-sm text-slate-400 mb-6 flex-1 leading-relaxed">
+                  {post.desc}
                 </p>
-                <div className="flex items-center justify-between text-xs text-slate-500 mb-3">
-                  <span>4–6 min read</span>
-                  <span className="inline-flex items-center gap-1">
-                    <span className="h-2 w-2 rounded-full bg-emerald-400" />
-                    Practical tips
-                  </span>
+                <div className="flex items-center justify-between text-xs text-slate-500 border-t border-slate-800 pt-4 mt-auto">
+                  <span>{post.read}</span>
+                  <button className="font-bold text-indigo-400 group-hover:text-pink-400 transition-colors flex items-center gap-1">
+                    Read article &rarr;
+                  </button>
                 </div>
-                <button className="mt-auto text-sm font-semibold text-blue-600 group-hover:text-indigo-600">
-                  Read article →
-                </button>
               </article>
             ))}
           </div>
